@@ -1,0 +1,11 @@
+--- matio-1.5.2/getopt/getopt_long.c.orig	2012-11-19 17:49:05.162715700 +0100
++++ matio-1.5.2/getopt/getopt_long.c		2012-11-19 17:49:39.050389941 +0100
+@@ -57,7 +57,7 @@
+  */
+ 
+ #if !defined(_WIN32) && !defined(_WIN64)
+-#   include <sys/cdefs.h>
++#   include <sys/types.h>
+ #   include <err.h>
+ #else
+ #   include <stdio.h>

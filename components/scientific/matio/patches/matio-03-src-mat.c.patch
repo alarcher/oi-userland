@@ -1,0 +1,10 @@
+--- matio-1.5.2/src/mat.c.orig	2013-12-03 16:58:25.313391026 +0100
++++ matio-1.5.2/src/mat.c	2013-12-03 16:59:21.877678953 +0100
+@@ -36,6 +36,7 @@
+ #include <stdio.h>
+ #include <math.h>
+ #include <time.h>
++#undef feof
+ #if defined(_WIN64) || defined(_WIN32)
+ #   include <io.h>
+ #   define mktemp _mktemp

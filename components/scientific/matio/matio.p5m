@@ -1,0 +1,68 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 <contributor>. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification \
+    value="org.opensolaris.category.2008:System/Libraries"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+dir  path=usr
+dir  path=usr/bin
+dir  path=usr/bin/$(MACH64)
+file path=usr/bin/$(MACH64)/matdump
+file path=usr/bin/matdump
+dir  path=usr/include
+dir  path=usr/include/matio
+file path=usr/include/matio/matio.h
+file path=usr/include/matio/matio_pubconf.h
+dir  path=usr/lib
+dir  path=usr/lib/$(MACH64)
+link path=usr/lib/$(MACH64)/libmatio.so target=libmatio.so.2.0.2
+link path=usr/lib/$(MACH64)/libmatio.so.2 target=libmatio.so.2.0.2
+file path=usr/lib/$(MACH64)/libmatio.so.2.0.2
+dir  path=usr/lib/$(MACH64)/pkgconfig
+file path=usr/lib/$(MACH64)/pkgconfig/matio.pc
+link path=usr/lib/libmatio.so target=libmatio.so.2.0.2
+link path=usr/lib/libmatio.so.2 target=libmatio.so.2.0.2
+file path=usr/lib/libmatio.so.2.0.2
+dir  path=usr/lib/pkgconfig
+file path=usr/lib/pkgconfig/matio.pc
+dir  path=usr/share
+dir  path=usr/share/man
+dir  path=usr/share/man/man3
+file path=usr/share/man/man3/Mat_Close.3
+file path=usr/share/man/man3/Mat_CreateVer.3
+file path=usr/share/man/man3/Mat_GetFilename.3
+file path=usr/share/man/man3/Mat_GetLibraryVersion.3
+file path=usr/share/man/man3/Mat_GetVersion.3
+file path=usr/share/man/man3/Mat_Open.3
+file path=usr/share/man/man3/Mat_Rewind.3
+file path=usr/share/man/man3/Mat_VarAddStructField.3
+file path=usr/share/man/man3/Mat_VarCreate.3
+file path=usr/share/man/man3/Mat_VarCreateStruct.3
+file path=usr/share/man/man3/Mat_VarFree.3
+file path=usr/share/man/man3/Mat_VarGetNumberOfFields.3
+file path=usr/share/man/man3/Mat_VarGetStructFieldnames.3
+file path=usr/share/man/man3/Mat_VarGetStructs.3
+file path=usr/share/man/man3/Mat_VarGetStructsLinear.3
+file path=usr/share/man/man3/Mat_VarRead.3
+file path=usr/share/man/man3/Mat_VarReadInfo.3
+file path=usr/share/man/man3/Mat_VarReadNext.3
+file path=usr/share/man/man3/Mat_VarReadNextInfo.3
+file path=usr/share/man/man3/Mat_VarWrite.3

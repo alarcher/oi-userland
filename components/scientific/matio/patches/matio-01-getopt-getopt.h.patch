@@ -1,0 +1,11 @@
+--- matio-1.5.2/getopt/getopt.h.orig	2012-11-19 17:48:59.074602374 +0100
++++ matio-1.5.2/getopt/getopt.h		2012-11-19 17:49:23.121656012 +0100
+@@ -41,7 +41,7 @@
+ #define _GETOPT_H_
+ 
+ #if !defined(_WIN32) && !defined(_WIN64)
+-#   include <sys/cdefs.h>
++#   include <sys/types.h>
+ #endif
+ 
+ /*
