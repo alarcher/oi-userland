@@ -1,0 +1,10 @@
+https://github.com/Intrepid/clang-upc/issues/76
+--- ./tools/clang/lib/Driver/ToolChains.h.orig  2015-06-17 07:22:17.474259305 +0200
++++ ./tools/clang/lib/Driver/ToolChains.h       2015-06-17 07:23:08.063870142 +0200
+@@ -526,6 +526,7 @@
+   Tool *buildAssembler() const override;
+   Tool *buildLinker() const override;
+ 
++       bool IsUnwindTablesDefault() const override { return false; }
+ };
+

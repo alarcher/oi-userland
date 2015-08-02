@@ -1,0 +1,31 @@
+--- ./cmake/modules/AddLLVM.cmake.orig  2015-06-17 06:54:14.598304266 +0200
++++ ./cmake/modules/AddLLVM.cmake 2015-06-17 06:55:10.948903239 +0200
+@@ -145,6 +145,9 @@
+     if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+       set_property(TARGET ${target_name} APPEND_STRING PROPERTY
+                    LINK_FLAGS " -Wl,-dead_strip")
++    elseif(${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
++      set_property(TARGET ${target_name} APPEND_STRING PROPERTY
++                   LINK_FLAGS " -Wl,-z -Wl,ignore")
+     elseif(NOT WIN32)
+       # Object files are compiled with -ffunction-data-sections.
+       set_property(TARGET ${target_name} APPEND_STRING PROPERTY
+
+--- Makefile.rules.orig 2015-06-17 06:51:58.950831039 +0200
++++ Makefile.rules  2015-06-17 06:53:22.213380226 +0200
+@@ -639,8 +639,12 @@
+   ifeq ($(HOST_OS),Darwin)
+     LD.Flags += -Wl,-dead_strip
+   else
+-    ifneq ($(HOST_OS), $(filter $(HOST_OS), Cygwin MingW))
+-      LD.Flags += -Wl,--gc-sections
++    ifneq ($(HOST_OS), $(filter $(HOST_OS), Cygwin MingW SunOS))
++     ifeq ($(HOST_OS),SunOS)
++       LD.Flags += -Wl,-z -Wl,ignore
++     else
++       LD.Flags += -Wl,--gc-sections
++      endif
+     endif
+   endif
+ endif
+

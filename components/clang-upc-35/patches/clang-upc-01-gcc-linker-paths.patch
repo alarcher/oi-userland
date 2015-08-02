@@ -1,0 +1,68 @@
+--- ./tools/clang/lib/Frontend/InitHeaderSearch.cpp.orig  2013-06-24 22:02:16.496113150 +0400
++++ ./tools/clang/lib/Frontend/InitHeaderSearch.cpp 2013-06-24 22:04:09.683488600 +0400
+@@ -434,7 +434,7 @@
+                                 "", "", "", triple);
+     break;
+   case llvm::Triple::Solaris:
+-    AddGnuCPlusPlusIncludePaths("/usr/gcc/4.5/include/c++/4.5.2/",
++    AddGnuCPlusPlusIncludePaths("/usr/gcc/4.8/include/c++/4.8.3/",
+                                 "i386-pc-solaris2.11", "", "", triple);
+     // Solaris - Fall though..
+   case llvm::Triple::AuroraUX:
+
+--- ./include/llvm/Support/Host.h.orig  2014-06-27 15:06:03.176685020 +0400
++++ ./include/llvm/Support/Host.h 2014-06-27 15:05:52.437081894 +0400
+@@ -18,6 +18,8 @@
+
+ #if defined(__linux__) || defined(__GNU__)
+ #include <endian.h>
++#elif defined(__sun)
++#include <sys/isa_defs.h>
+ #else
+ #if !defined(BYTE_ORDER) && !defined(LLVM_ON_WIN32)
+ #include <machine/endian.h>
+
+--- ./tools/clang/lib/Driver/Tools.cpp.orig     2015-04-15 01:44:20.000000000 +0200
++++ ./tools/clang/lib/Driver/Tools.cpp  2015-06-17 07:46:48.606412355 +0200
+@@ -5562,7 +5562,7 @@
+   // asm_final spec is empty.
+
+   const char *Exec =
+-    Args.MakeArgString(getToolChain().GetProgramPath("as"));
++    Args.MakeArgString(getToolChain().GetProgramPath("gas"));
+   C.addCommand(new Command(JA, *this, Exec, CmdArgs));
+ }
+
+@@ -5999,18 +5999,19 @@
+                                   const ArgList &Args,
+                                   const char *LinkingOutput) const {
+   // FIXME: Find a real GCC, don't hard-code versions here
+-  std::string GCCLibPath = "/usr/gcc/4.5/lib/gcc/";
++  std::string GCCLibPath = "/usr/gcc/4.8/lib/gcc/";
+   const llvm::Triple &T = getToolChain().getTriple();
+   std::string LibPath = "/usr/lib/";
+   llvm::Triple::ArchType Arch = T.getArch();
++  std::string SUNld="/usr/ccs/bin/ld";
+   switch (Arch) {
+   case llvm::Triple::x86:
+     GCCLibPath +=
+-        ("i386-" + T.getVendorName() + "-" + T.getOSName()).str() + "/4.5.2/";
++        ("i386-" + T.getVendorName() + "-" + T.getOSName()).str() + "/4.8.3/";
+     break;
+   case llvm::Triple::x86_64:
+     GCCLibPath += ("i386-" + T.getVendorName() + "-" + T.getOSName()).str();
+-    GCCLibPath += "/4.5.2/amd64/";
++    GCCLibPath += "/4.8.3/amd64/";
+     LibPath += "amd64/";
+     break;
+   default:
+@@ -6109,8 +6110,7 @@
+
+   addProfileRT(getToolChain(), Args, CmdArgs);
+
+-  const char *Exec =
+-    Args.MakeArgString(getToolChain().GetLinkerPath());
++  const char *Exec = Args.MakeArgString(SUNld);
+   C.addCommand(new Command(JA, *this, Exec, CmdArgs));
+ }
+
