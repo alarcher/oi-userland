@@ -19,8 +19,10 @@ COMPONENT_NAME=		illumos-gate
 COMPONENT_SRC=		$(COMPONENT_NAME)
 
 GIT=git
-GIT_REPO=git://github.com/illumos/illumos-gate.git
-GIT_BRANCH=master
+#GIT_REPO=git://github.com/illumos/illumos-gate.git
+#GIT_BRANCH=master
+GIT_REPO=git://github.com/alarcher/illumos-gate.git
+GIT_BRANCH=hipsterized
 GIT_CHANGESET=HEAD
 
 FETCH=$(WS_TOOLS)/userland-fetch
@@ -32,6 +34,8 @@ NIGHTLY_OPTIONS=-nCDmprt
 else
 NIGHTLY_OPTIONS=-nCmprt
 endif
+
+RELEASE_MINOR=1
 ONNV_BUILDNUM=$(BRANCHID)
 
 COMPONENT_REVISION=$(shell cd $(COMPONENT_SRC); git rev-list HEAD --count)
