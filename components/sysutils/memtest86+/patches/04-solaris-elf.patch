@@ -1,0 +1,16 @@
+--- memtest.lds.orig	lun. déc. 12 17:29:32 2016
++++ memtest.lds	lun. déc. 12 17:27:23 2016
+@@ -1,4 +1,4 @@
+-OUTPUT_FORMAT("elf32-i386");
++OUTPUT_FORMAT("elf32-i386-sol2");
+ OUTPUT_ARCH(i386);
+ 
+ ENTRY(_start); 
+--- memtest_shared.lds.orig	lun. déc. 12 17:29:23 2016
++++ memtest_shared.lds	lun. déc. 12 17:27:09 2016
+@@ -1,4 +1,4 @@
+-OUTPUT_FORMAT("elf32-i386");
++OUTPUT_FORMAT("elf32-i386-sol2");
+ OUTPUT_ARCH(i386);
+ 
+ ENTRY(startup_32); 

@@ -32,8 +32,6 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
-
 PATCH_LEVEL=0
 
 COMPONENT_PREP_ACTION= $(CP) $(COMPONENT_DIR)/files/io.h $(SOURCE_DIR)
