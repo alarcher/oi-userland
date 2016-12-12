@@ -1,0 +1,11 @@
+--- test.c.orig	lun. déc. 12 16:25:51 2016
++++ test.c	lun. déc. 12 16:26:12 2016
+@@ -14,7 +14,7 @@
+ #include "stdint.h"
+ #include "cpuid.h"
+ #include "smp.h"
+-#include <sys/io.h>
++#include "io.h"
+ 
+ extern struct cpu_ident cpu_id;
+ extern volatile int    mstr_cpu;
