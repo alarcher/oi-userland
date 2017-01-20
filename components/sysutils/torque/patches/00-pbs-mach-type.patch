@@ -1,0 +1,10 @@
+--- torque-6.1.0.orig/buildutils/pbs_mach_type	2017-01-21 01:43:33.692696222 +0100
++++ torque-6.1.0/buildutils/pbs_mach_type	2017-01-21 01:43:54.996689126 +0100
+@@ -113,6 +113,7 @@
+   sun*)  case "$REL" in
+            4*)  mach=sunos4 ;;
+            5.10)  mach=solaris7 ;;
++           5.11)  mach=solaris7 ;;
+            5.[0123456]*)  mach=solaris5 ;;
+            5.*)  mach=solaris7 ;;
+            *)   bad_rel=y ;;

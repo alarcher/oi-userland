@@ -1,0 +1,11 @@
+--- torque-6.1.0.orig/src/server/pbsd_main.c	2017-01-21 01:58:41.646167995 +0100
++++ torque-6.1.0/src/server/pbsd_main.c	2017-01-21 01:59:11.820170121 +0100
+@@ -2847,7 +2847,7 @@
+ 
+   bool DoBackground,  /* I */
+   bool LineBufferOutput,  /* I */
+-  int *sid)           /* O */
++  pid_t *sid)           /* O */
+ 
+   {
+   int    pid;
