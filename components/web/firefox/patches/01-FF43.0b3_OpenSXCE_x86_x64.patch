@@ -1619,13 +1619,13 @@ diff -Nurb firefox-43.0b3/memory/mozalloc/mozalloc.cpp firefox-43.0b3/memory/moz
  }
  #endif // if defined(HAVE_VALLOC)
  
-+//#if defined(MOZ_MEMORY_SOLARIS)
++#if defined(MOZ_MEMORY_SOLARIS)
 +#include "jemalloc_types.h"
 +extern "C" {
 +extern size_t malloc_usable_size_impl(const void *ptr);
 +extern void jemalloc_stats(jemalloc_stats_t* stats);
 +}
-+//#endif
++#endif
 + 
  #ifndef MOZ_STATIC_RUNTIME
  size_t

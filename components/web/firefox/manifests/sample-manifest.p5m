@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2016 <contributor>
+# Copyright 2017 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -551,7 +551,6 @@ file path=usr/include/firefox/ipc/IPCMessageUtils.h
 file path=usr/include/firefox/ipc/nsGUIEventIPC.h
 file path=usr/include/firefox/jArray.h
 file path=usr/include/firefox/jconfig.h
-file path=usr/include/firefox/jemalloc_types.h
 file path=usr/include/firefox/jerror.h
 file path=usr/include/firefox/jinclude.h
 file path=usr/include/firefox/jmorecfg.h
@@ -2752,8 +2751,6 @@ file path=usr/include/firefox/mozilla/utils.h
 file path=usr/include/firefox/mozilla/widget/IMEData.h
 file path=usr/include/firefox/mozilla/widget/PuppetBidiKeyboard.h
 file path=usr/include/firefox/mozilla/widget/WidgetMessageUtils.h
-file path=usr/include/firefox/mozmemory.h
-file path=usr/include/firefox/mozmemory_wrap.h
 file path=usr/include/firefox/mozzconf.h
 file path=usr/include/firefox/mp4_demuxer/Adts.h
 file path=usr/include/firefox/mp4_demuxer/AnnexB.h
@@ -4789,7 +4786,6 @@ file path=usr/lib/firefox/sdk/bin/xpidllex.py
 file path=usr/lib/firefox/sdk/bin/xpidlyacc.py
 file path=usr/lib/firefox/sdk/bin/xpt.py
 file path=usr/lib/firefox/sdk/lib/libcrmf.a
-file path=usr/lib/firefox/sdk/lib/libmemory.a
 file path=usr/lib/firefox/sdk/lib/libmozglue.a
 file path=usr/lib/firefox/sdk/lib/libnspr4.so
 file path=usr/lib/firefox/sdk/lib/libnss3.so
