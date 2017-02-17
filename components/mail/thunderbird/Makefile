@@ -45,11 +45,11 @@ COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D) && cp $(C
 
 PATH=/usr/gnu/bin:/usr/bin:/usr/sbin
 
-CONFIGURE_OPTIONS =	--disable-alsa
+CONFIGURE_OPTIONS  =  --disable-alsa
 CONFIGURE_OPTIONS +=	--enable-dbus
 CONFIGURE_OPTIONS +=	--enable-gnomeui
 CONFIGURE_OPTIONS +=	--enable-libxul
-CONFIGURE_OPTIONS +=	--enable-jemalloc
+CONFIGURE_OPTIONS +=	--disable-jemalloc
 CONFIGURE_OPTIONS +=	--without-intl-api
 CONFIGURE_OPTIONS +=	--disable-debug
 CONFIGURE_OPTIONS +=	--disable-tests
@@ -69,7 +69,7 @@ CONFIGURE_OPTIONS +=	--with-system-libevent
 CONFIGURE_OPTIONS +=	--with-system-zlib
 CONFIGURE_OPTIONS +=	--with-system-bz2
 CONFIGURE_OPTIONS +=	--disable-crashreporter
-CONFIGURE_OPTIONS +=    --enable-startup-notification
+CONFIGURE_OPTIONS +=  --enable-startup-notification
 CONFIGURE_OPTIONS +=	--enable-calendar
 CONFIGURE_OPTIONS +=	--enable-application=mail
 CONFIGURE_OPTIONS +=	--prefix=/usr
@@ -87,7 +87,7 @@ ENV +=	MOZILLA_PKG_NAME=thunderbird
 ENV +=	CXXFLAGS="$(CXXFLAGS)"
 ENV +=  OS_DEFINES="-D__USE_LEGACY_PROTOTYPES__"
 ENV +=  GLD_WRAPPER=$(BUILD_DIR)/gld-wrapper
-ENV +=  LDFLAGS="-L$(BUILD_DIR_32)/dist/lib -L$(BUILD_DIR_32)/dist/bin"
+ENV +=  LDFLAGS="-L$(BUILD_DIR_32)/dist/lib -L$(BUILD_DIR_32)/dist/bin -lumem"
 
 CONFIGURE_ENV =	$(ENV)
 COMPONENT_BUILD_ENV =	$(ENV)

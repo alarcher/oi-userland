@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2016 <contributor>
+# Copyright 2017 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -613,7 +613,6 @@ file path=usr/include/thunderbird-$(COMPONENT_VERSION)/ipc/IPCMessageUtils.h
 file path=usr/include/thunderbird-$(COMPONENT_VERSION)/ipc/nsGUIEventIPC.h
 file path=usr/include/thunderbird-$(COMPONENT_VERSION)/jArray.h
 file path=usr/include/thunderbird-$(COMPONENT_VERSION)/jconfig.h
-file path=usr/include/thunderbird-$(COMPONENT_VERSION)/jemalloc_types.h
 file path=usr/include/thunderbird-$(COMPONENT_VERSION)/jerror.h
 file path=usr/include/thunderbird-$(COMPONENT_VERSION)/jinclude.h
 file path=usr/include/thunderbird-$(COMPONENT_VERSION)/jmorecfg.h
@@ -2830,8 +2829,6 @@ file path=usr/include/thunderbird-$(COMPONENT_VERSION)/mozilla/utils.h
 file path=usr/include/thunderbird-$(COMPONENT_VERSION)/mozilla/widget/IMEData.h
 file path=usr/include/thunderbird-$(COMPONENT_VERSION)/mozilla/widget/PuppetBidiKeyboard.h
 file path=usr/include/thunderbird-$(COMPONENT_VERSION)/mozilla/widget/WidgetMessageUtils.h
-file path=usr/include/thunderbird-$(COMPONENT_VERSION)/mozmemory.h
-file path=usr/include/thunderbird-$(COMPONENT_VERSION)/mozmemory_wrap.h
 file path=usr/include/thunderbird-$(COMPONENT_VERSION)/mp4_demuxer/Adts.h
 file path=usr/include/thunderbird-$(COMPONENT_VERSION)/mp4_demuxer/AnnexB.h
 file path=usr/include/thunderbird-$(COMPONENT_VERSION)/mp4_demuxer/Atom.h
@@ -7350,7 +7347,6 @@ file path=usr/lib/thunderbird-devel-$(COMPONENT_VERSION)/sdk/bin/xpidllex.py
 file path=usr/lib/thunderbird-devel-$(COMPONENT_VERSION)/sdk/bin/xpidlyacc.py
 file path=usr/lib/thunderbird-devel-$(COMPONENT_VERSION)/sdk/bin/xpt.py
 file path=usr/lib/thunderbird-devel-$(COMPONENT_VERSION)/sdk/lib/libcrmf.a
-file path=usr/lib/thunderbird-devel-$(COMPONENT_VERSION)/sdk/lib/libmemory.a
 file path=usr/lib/thunderbird-devel-$(COMPONENT_VERSION)/sdk/lib/libmozglue.a
 file path=usr/lib/thunderbird-devel-$(COMPONENT_VERSION)/sdk/lib/libnspr4.so
 file path=usr/lib/thunderbird-devel-$(COMPONENT_VERSION)/sdk/lib/libnss3.so
