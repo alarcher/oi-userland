@@ -23,19 +23,18 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		binutils
-COMPONENT_VERSION=	2.25.1
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	2.28
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/binutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:b5b14added7d78a8d1ca70b5cb75fef57ce2197264f4f5835326b0df22ac9f22
+	sha256:6297433ee120b11b4b0a1c8f3512d7d73501753142ab9e2daa13c5a3edd32a72
 COMPONENT_BUGDB=	utility/gnu-binutils
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -51,16 +50,16 @@ CPPFLAGS += $(CPP_LARGEFILES) $(CPP_POSIX)
 
 CONFIGURE_PREFIX =	/usr/gnu
 
-CONFIGURE_OPTIONS +=	--mandir=$(CONFIGURE_MANDIR)
-CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS +=	--enable-64-bit-bfd
-CONFIGURE_OPTIONS +=    --enable-gold=no
-CONFIGURE_OPTIONS +=    --enable-plugins=no
-CONFIGURE_OPTIONS +=    --enable-nls
-CONFIGURE_OPTIONS +=    --disable-libtool-lock
-CONFIGURE_OPTIONS +=    --enable-largefile=yes
+CONFIGURE_OPTIONS+=	--mandir=$(CONFIGURE_MANDIR)
+CONFIGURE_OPTIONS+=	--infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS+=	--enable-64-bit-bfd
+CONFIGURE_OPTIONS+= --enable-gold=no
+CONFIGURE_OPTIONS+= --enable-plugins=no
+CONFIGURE_OPTIONS+= --enable-nls
+CONFIGURE_OPTIONS+= --disable-libtool-lock
+CONFIGURE_OPTIONS+= --enable-largefile=yes
 
-CONFIGURE_OPTIONS +=    CPPFLAGS="$(CPPFLAGS)"
+CONFIGURE_OPTIONS+= CPPFLAGS="$(CPPFLAGS)"
 
 $(INSTALL_32):	$(INSTALL_64)
 

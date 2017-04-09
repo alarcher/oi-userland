@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2016 <contributor>
+# Copyright 2017 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -27,9 +27,9 @@ hardlink path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/ar \
 hardlink path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/as \
     target=../../bin/as
 hardlink path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/ld \
-    target=../../bin/ld
+    target=../../bin/ld.bfd
 hardlink path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/ld.bfd \
-    target=../../bin/ld
+    target=../../bin/ld.bfd
 hardlink path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/nm \
     target=../../bin/nm
 hardlink path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/objcopy \
@@ -38,6 +38,8 @@ hardlink path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/objdump \
     target=../../bin/objdump
 hardlink path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/ranlib \
     target=../../bin/ranlib
+hardlink path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/readelf \
+    target=../../bin/readelf
 hardlink path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/bin/strip \
     target=../../bin/strip
 file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_i386.x
@@ -66,6 +68,9 @@ file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_i3
 file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_i386_sol2.x
 file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_i386_sol2.xbn
 file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_i386_sol2.xc
+file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_i386_sol2.xd
+file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_i386_sol2.xdc
+file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_i386_sol2.xdw
 file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_i386_sol2.xn
 file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_i386_sol2.xr
 file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_i386_sol2.xs
@@ -73,6 +78,19 @@ file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_i3
 file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_i386_sol2.xsw
 file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_i386_sol2.xu
 file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_i386_sol2.xw
+file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_iamcu.x
+file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_iamcu.xbn
+file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_iamcu.xc
+file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_iamcu.xd
+file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_iamcu.xdc
+file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_iamcu.xdw
+file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_iamcu.xn
+file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_iamcu.xr
+file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_iamcu.xs
+file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_iamcu.xsc
+file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_iamcu.xsw
+file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_iamcu.xu
+file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_iamcu.xw
 file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_k1om.x
 file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_k1om.xbn
 file path=usr/gnu/$(MACH)-$(PLAT)-solaris$(SOLARIS_RELEASE)/lib/ldscripts/elf_k1om.xc
@@ -131,8 +149,8 @@ file path=usr/gnu/bin/$(MACH64)/as
 file path=usr/gnu/bin/$(MACH64)/c++filt
 file path=usr/gnu/bin/$(MACH64)/elfedit
 file path=usr/gnu/bin/$(MACH64)/gprof
-hardlink path=usr/gnu/bin/$(MACH64)/ld target=ld.bfd
-file path=usr/gnu/bin/$(MACH64)/ld.bfd
+file path=usr/gnu/bin/$(MACH64)/ld
+hardlink path=usr/gnu/bin/$(MACH64)/ld.bfd target=ld
 file path=usr/gnu/bin/$(MACH64)/nm
 file path=usr/gnu/bin/$(MACH64)/objcopy
 file path=usr/gnu/bin/$(MACH64)/objdump
@@ -147,8 +165,8 @@ file path=usr/gnu/bin/as
 file path=usr/gnu/bin/c++filt
 file path=usr/gnu/bin/elfedit
 file path=usr/gnu/bin/gprof
-file path=usr/gnu/bin/ld
-hardlink path=usr/gnu/bin/ld.bfd target=ld
+hardlink path=usr/gnu/bin/ld target=ld.bfd
+file path=usr/gnu/bin/ld.bfd
 file path=usr/gnu/bin/nm
 file path=usr/gnu/bin/objcopy
 file path=usr/gnu/bin/objdump
@@ -169,6 +187,7 @@ file path=usr/gnu/lib/libopcodes.a
 file path=usr/gnu/share/locale/bg/LC_MESSAGES/binutils.mo
 file path=usr/gnu/share/locale/bg/LC_MESSAGES/gprof.mo
 file path=usr/gnu/share/locale/bg/LC_MESSAGES/ld.mo
+file path=usr/gnu/share/locale/ca/LC_MESSAGES/binutils.mo
 file path=usr/gnu/share/locale/da/LC_MESSAGES/bfd.mo
 file path=usr/gnu/share/locale/da/LC_MESSAGES/binutils.mo
 file path=usr/gnu/share/locale/da/LC_MESSAGES/gprof.mo
@@ -233,6 +252,7 @@ file path=usr/gnu/share/locale/rw/LC_MESSAGES/binutils.mo
 file path=usr/gnu/share/locale/rw/LC_MESSAGES/gas.mo
 file path=usr/gnu/share/locale/rw/LC_MESSAGES/gprof.mo
 file path=usr/gnu/share/locale/sk/LC_MESSAGES/binutils.mo
+file path=usr/gnu/share/locale/sr/LC_MESSAGES/bfd.mo
 file path=usr/gnu/share/locale/sr/LC_MESSAGES/binutils.mo
 file path=usr/gnu/share/locale/sr/LC_MESSAGES/gprof.mo
 file path=usr/gnu/share/locale/sv/LC_MESSAGES/bfd.mo
@@ -259,6 +279,7 @@ file path=usr/gnu/share/locale/vi/LC_MESSAGES/ld.mo
 file path=usr/gnu/share/locale/vi/LC_MESSAGES/opcodes.mo
 file path=usr/gnu/share/locale/zh_CN/LC_MESSAGES/bfd.mo
 file path=usr/gnu/share/locale/zh_CN/LC_MESSAGES/binutils.mo
+file path=usr/gnu/share/locale/zh_CN/LC_MESSAGES/gas.mo
 file path=usr/gnu/share/locale/zh_CN/LC_MESSAGES/ld.mo
 file path=usr/gnu/share/locale/zh_CN/LC_MESSAGES/opcodes.mo
 file path=usr/gnu/share/locale/zh_TW/LC_MESSAGES/binutils.mo
