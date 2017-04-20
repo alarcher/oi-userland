@@ -1,0 +1,783 @@
+From 7666522c2bb3ddb692aff2da58b34ec116e7d0e6 Mon Sep 17 00:00:00 2001
+From: Hayashi Naoyuki <alpha@culzean.org>
+Date: Tue, 11 Oct 2016 02:06:13 +0900
+Subject: [PATCH] Added support for OpenSolaris on Alpha and AArch64
+
+---
+ configure                             |  36 ++++++++++++
+ configure.ac                          |  36 ++++++++++++
+ gcc/config.gcc                        |  11 +++-
+ gcc/config/aarch64/aarch64-elf.h      |   1 +
+ gcc/config/aarch64/aarch64.c          |  20 +++++++
+ gcc/config/aarch64/aarch64.h          |   1 +
+ gcc/config/aarch64/sol2.h             | 105 +++++++++++++++++++++++++++++++++
+ gcc/config/aarch64/t-sol2             |  25 ++++++++
+ gcc/config/alpha/alpha.c              |  21 +++++++
+ gcc/config/alpha/sol2.h               | 108 ++++++++++++++++++++++++++++++++++
+ gcc/config/alpha/t-sol2               |  25 ++++++++
+ gcc/config/sol2-c.c                   |   6 ++
+ gcc/config/sol2.h                     |   1 +
+ gcc/configure                         |  10 +++-
+ gcc/configure.ac                      |  10 +++-
+ gcc/gengtype-lex.l                    |   4 ++
+ gcc/genmddeps.c                       |   4 ++
+ libgcc/config.host                    |  15 +++++
+ libgcc/config/alpha/t-sol2            |   6 ++
+ libstdc++-v3/src/c++98/locale_init.cc |  10 ++--
+ 20 files changed, 447 insertions(+), 8 deletions(-)
+ create mode 100644 gcc/config/aarch64/sol2.h
+ create mode 100644 gcc/config/aarch64/t-sol2
+ create mode 100644 gcc/config/alpha/sol2.h
+ create mode 100644 gcc/config/alpha/t-sol2
+ create mode 100644 libgcc/config/alpha/t-sol2
+
+diff --git a/configure b/configure
+index a3f66ba..32c814e 100755
+--- a/configure
++++ b/configure
+@@ -3704,6 +3704,18 @@ case "${target}" in
+     ;;
+   *-*-vxworks*)
+     ;;
++  aarch64*-*-solaris2*)
++    noconfigdirs="$noconfigdirs target-newlib target-libgloss ${libgcj}"
++    noconfigdirs="$noconfigdirs target-libiberty target-libssp"
++    noconfigdirs="$noconfigdirs target-libmudflap target-libgomp target-libitm"
++    case "${host}" in
++        aarch64*-*-solaris2*)
++        ;;
++        *)
++            noconfigdirs="$noconfigdirs target-libstdc++-v3"
++        ;;
++    esac
++    ;;
+   alpha*-dec-osf*)
+     # ld works, but does not support shared libraries.
+     # gas doesn't generate exception information.
+@@ -3712,6 +3724,18 @@ case "${target}" in
+   alpha*-*-*vms*)
+     noconfigdirs="$noconfigdirs gdb target-newlib target-libgloss"
+     ;;
++  alpha*-*-solaris2*)
++    noconfigdirs="$noconfigdirs target-newlib target-libgloss ${libgcj}"
++    noconfigdirs="$noconfigdirs target-libiberty target-libssp"
++    noconfigdirs="$noconfigdirs target-libmudflap target-libgomp target-libitm"
++    case "${host}" in
++        alpha*-*-solaris2*)
++        ;;
++        *)
++            noconfigdirs="$noconfigdirs target-libstdc++-v3"
++        ;;
++    esac
++    ;;
+   alpha*-*-*)
+     # newlib is not 64 bit ready
+     noconfigdirs="$noconfigdirs target-newlib target-libgloss"
+@@ -3722,6 +3746,18 @@ case "${target}" in
+   arc-*-*|arceb-*-*)
+     noconfigdirs="$noconfigdirs target-libgloss"
+     ;;
++  arm*-*-solaris2*)
++    noconfigdirs="$noconfigdirs target-newlib target-libgloss ${libgcj}"
++    noconfigdirs="$noconfigdirs target-libiberty target-libssp"
++    noconfigdirs="$noconfigdirs target-libmudflap target-libgomp target-libitm"
++    case "${host}" in
++        arm*-*-solaris2*)
++        ;;
++        *)
++            noconfigdirs="$noconfigdirs target-libstdc++-v3"
++        ;;
++    esac
++    ;;
+   arm-*-pe*)
+     noconfigdirs="$noconfigdirs target-libgloss"
+     ;;
+diff --git a/configure.ac b/configure.ac
+index 987dfab..5456a4b 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1051,6 +1051,18 @@ case "${target}" in
+     ;;
+   *-*-vxworks*)
+     ;;
++  aarch64*-*-solaris2*)
++    noconfigdirs="$noconfigdirs target-newlib target-libgloss ${libgcj}"
++    noconfigdirs="$noconfigdirs target-libiberty target-libssp"
++    noconfigdirs="$noconfigdirs target-libmudflap target-libgomp target-libitm"
++    case "${host}" in
++        aarch64*-*-solaris2*)
++        ;;
++        *)
++            noconfigdirs="$noconfigdirs target-libstdc++-v3"
++        ;;
++    esac
++    ;;
+   alpha*-dec-osf*)
+     # ld works, but does not support shared libraries.
+     # gas doesn't generate exception information.
+@@ -1059,6 +1071,18 @@ case "${target}" in
+   alpha*-*-*vms*)
+     noconfigdirs="$noconfigdirs gdb target-newlib target-libgloss"
+     ;;
++  alpha*-*-solaris2*)
++    noconfigdirs="$noconfigdirs target-newlib target-libgloss ${libgcj}"
++    noconfigdirs="$noconfigdirs target-libiberty target-libssp"
++    noconfigdirs="$noconfigdirs target-libmudflap target-libgomp target-libitm"
++    case "${host}" in
++        alpha*-*-solaris2*)
++        ;;
++        *)
++            noconfigdirs="$noconfigdirs target-libstdc++-v3"
++        ;;
++    esac
++    ;;
+   alpha*-*-*)
+     # newlib is not 64 bit ready
+     noconfigdirs="$noconfigdirs target-newlib target-libgloss"
+@@ -1069,6 +1093,18 @@ case "${target}" in
+   arc-*-*|arceb-*-*)
+     noconfigdirs="$noconfigdirs target-libgloss"
+     ;;
++  arm*-*-solaris2*)
++    noconfigdirs="$noconfigdirs target-newlib target-libgloss ${libgcj}"
++    noconfigdirs="$noconfigdirs target-libiberty target-libssp"
++    noconfigdirs="$noconfigdirs target-libmudflap target-libgomp target-libitm"
++    case "${host}" in
++        arm*-*-solaris2*)
++        ;;
++        *)
++            noconfigdirs="$noconfigdirs target-libstdc++-v3"
++        ;;
++    esac
++    ;;
+   arm-*-pe*)
+     noconfigdirs="$noconfigdirs target-libgloss"
+     ;;
+diff --git a/gcc/config.gcc b/gcc/config.gcc
+index c835734..3232d2c 100644
+--- a/gcc/config.gcc
++++ b/gcc/config.gcc
+@@ -836,7 +836,7 @@ case ${target} in
+   tmake_file="${tmake_file} t-sol2 t-slibgcc"
+   c_target_objs="${c_target_objs} sol2-c.o"
+   cxx_target_objs="${cxx_target_objs} sol2-c.o sol2-cxx.o"
+-  extra_objs="sol2.o sol2-stubs.o"
++  extra_objs="${extra_objs} sol2.o sol2-stubs.o"
+   extra_options="${extra_options} sol2.opt"
+   case ${enable_threads}:${have_pthread_h}:${have_thread_h} in
+     "":yes:* | yes:yes:* )
+@@ -937,11 +937,20 @@ aarch64*-*-linux*)
+ 	done
+ 	TM_MULTILIB_CONFIG=`echo $TM_MULTILIB_CONFIG | sed 's/^,//'`
+ 	;;
++aarch64*-*-solaris2*)
++	tm_file="${tm_file} elfos.h gnu-user.h sol2.h aarch64/aarch64-elf.h aarch64/sol2.h"
++	tmake_file="${tmake_file} aarch64/t-aarch64 aarch64/t-sol2"
++	;;
+ alpha*-*-linux*)
+ 	tm_file="elfos.h ${tm_file} alpha/elf.h alpha/linux.h alpha/linux-elf.h glibc-stdint.h"
+ 	tmake_file="${tmake_file} alpha/t-linux"
+ 	extra_options="${extra_options} alpha/elf.opt"
+ 	;;
++alpha*-*-solaris2*)
++	tm_file="elfos.h ${tm_file} sol2.h alpha/elf.h alpha/sol2.h"
++	extra_options="${extra_options} alpha/elf.opt"
++	tmake_file="${tmake_file} alpha/t-alpha alpha/t-ieee alpha/t-sol2"
++	;;
+ alpha*-*-freebsd*)
+ 	tm_file="elfos.h ${tm_file} ${fbsd_tm_file} alpha/elf.h alpha/freebsd.h"
+ 	extra_options="${extra_options} alpha/elf.opt"
+diff --git a/gcc/config/aarch64/aarch64-elf.h b/gcc/config/aarch64/aarch64-elf.h
+index a5ec8cb..60757f6 100644
+--- a/gcc/config/aarch64/aarch64-elf.h
++++ b/gcc/config/aarch64/aarch64-elf.h
+@@ -117,6 +117,7 @@
+ #define ENDIAN_SPEC "-mlittle-endian"
+ #endif
+ 
++#undef MULTILIB_DEFAULTS
+ #if TARGET_DATA_MODEL == 1
+ #define ABI_SPEC  "-mabi=lp64"
+ #define MULTILIB_DEFAULTS { "mabi=lp64" }
+diff --git a/gcc/config/aarch64/aarch64.c b/gcc/config/aarch64/aarch64.c
+index 4113609..ae5a26a 100644
+--- a/gcc/config/aarch64/aarch64.c
++++ b/gcc/config/aarch64/aarch64.c
+@@ -11298,6 +11298,17 @@ aarch64_gen_adjusted_ldpstp (rtx *operands, bool load,
+   return true;
+ }
+ 
++#ifdef SUBTARGET_ATTRIBUTE_TABLE
++/* Table of valid machine attributes.  */
++static const struct attribute_spec aarch64_attribute_table[] =
++{
++  /* { name, min_len, max_len, decl_req, type_req, fn_type_req, handler,
++       do_diagnostic } */
++  SUBTARGET_ATTRIBUTE_TABLE,
++  { NULL,        0, 0, false, false, false, NULL, false }
++};
++#endif
++
+ #undef TARGET_ADDRESS_COST
+ #define TARGET_ADDRESS_COST aarch64_address_cost
+ 
+@@ -11544,6 +11555,15 @@ aarch64_gen_adjusted_ldpstp (rtx *operands, bool load,
+ #define TARGET_VECTORIZE_VEC_PERM_CONST_OK \
+   aarch64_vectorize_vec_perm_const_ok
+ 
++#ifdef SUBTARGET_INSERT_ATTRIBUTES
++#undef TARGET_INSERT_ATTRIBUTES
++#define TARGET_INSERT_ATTRIBUTES SUBTARGET_INSERT_ATTRIBUTES
++#endif
++
++#ifdef SUBTARGET_ATTRIBUTE_TABLE
++#undef TARGET_ATTRIBUTE_TABLE
++#define TARGET_ATTRIBUTE_TABLE aarch64_attribute_table
++#endif
+ 
+ #undef TARGET_FIXED_CONDITION_CODE_REGS
+ #define TARGET_FIXED_CONDITION_CODE_REGS aarch64_fixed_condition_code_regs
+diff --git a/gcc/config/aarch64/aarch64.h b/gcc/config/aarch64/aarch64.h
+index a2ed7b1..fb5b590 100644
+--- a/gcc/config/aarch64/aarch64.h
++++ b/gcc/config/aarch64/aarch64.h
+@@ -27,6 +27,7 @@
+   do							\
+     {							\
+       builtin_define ("__aarch64__");                   \
++      builtin_define ("__aarch64");                     \
+       builtin_define ("__ARM_64BIT_STATE");             \
+       builtin_define_with_int_value                     \
+         ("__ARM_ARCH", aarch64_architecture_version);   \
+diff --git a/gcc/config/aarch64/sol2.h b/gcc/config/aarch64/sol2.h
+new file mode 100644
+index 0000000..6f067c3
+--- /dev/null
++++ b/gcc/config/aarch64/sol2.h
+@@ -0,0 +1,105 @@
++/* Definitions of target machine for GCC, for SPARC running Solaris 2
++   Copyright 1992, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2004, 2005,
++   2006, 2007, 2008, 2010 Free Software Foundation, Inc.
++   Contributed by Ron Guilmette (rfg@netcom.com).
++   Additional changes by David V. Henkel-Wallace (gumby@cygnus.com).
++
++This file is part of GCC.
++
++GCC is free software; you can redistribute it and/or modify
++it under the terms of the GNU General Public License as published by
++the Free Software Foundation; either version 3, or (at your option)
++any later version.
++
++GCC is distributed in the hope that it will be useful,
++but WITHOUT ANY WARRANTY; without even the implied warranty of
++MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++GNU General Public License for more details.
++
++You should have received a copy of the GNU General Public License
++along with GCC; see the file COPYING3.  If not see
++<http://www.gnu.org/licenses/>.  */
++
++#define CPP_SPEC "%{pthread:-D_REENTRANT}"
++#define GNU_USER_DYNAMIC_LINKER "/lib/ld.so.1"
++
++#undef TARGET_SUN_TLS
++#define TARGET_SUN_TLS 1
++
++#define ASM_OUTPUT_CALL(FILE, FN)			        \
++  do								\
++    {								\
++      fprintf (FILE, "\tbl\t");					\
++      aarch64_print_operand (FILE, XEXP (DECL_RTL (FN), 0), 0);	\
++      fprintf (FILE, "\n");					\
++    }								\
++  while (0)
++
++#undef DEFAULT_SIGNED_CHAR
++#define DEFAULT_SIGNED_CHAR 1
++
++#undef WCHAR_TYPE
++#define WCHAR_TYPE "int"
++#undef WCHAR_TYPE_SIZE
++#define WCHAR_TYPE_SIZE 32
++
++#undef	WINT_TYPE
++#define	WINT_TYPE "int"
++#undef	WINT_TYPE_SIZE
++#define	WINT_TYPE_SIZE 32
++
++#undef	CC1_SPEC
++#define CC1_SPEC "%{!fno-PIC:-fPIC}"
++
++#undef LIB_SPEC
++#define LIB_SPEC  "%{shared:-lc -lgcc}%{!shared:%{profile:-lc -lgcc}%{!profile:-lc -lgcc}} "
++
++/* Register the Solaris-specific #pragma directives.  */
++#define REGISTER_TARGET_PRAGMAS() solaris_register_pragmas ()
++
++#undef INIT_SECTION_ASM_OP
++#define INIT_SECTION_ASM_OP	"\t.section\t.init, \"ax\""
++
++#undef FINI_SECTION_ASM_OP
++#define FINI_SECTION_ASM_OP	"\t.section\t.fini, \"ax\""
++
++#undef STARTFILE_SPEC
++#define STARTFILE_SPEC \
++    "%{!shared:%{!symbolic: crt1.o%s}} \
++    crti.o%s \
++    %{shared|pie:crtbeginS.o%s;:crtbegin.o%s}"
++
++#undef ENDFILE_SPEC
++#define ENDFILE_SPEC \
++    "%{Ofast|ffast-math|funsafe-math-optimizations:crtfastmath.o%s} \
++    %{shared|pie:crtendS.o%s;:crtend.o%s} \
++    crtn.o%s"
++
++#ifdef TARGET_FIX_ERR_A53_835769_DEFAULT
++#define CA53_ERR_835769_SPEC \
++  " %{!mno-fix-cortex-a53-835769:--fix-cortex-a53-835769}"
++#else
++#define CA53_ERR_835769_SPEC \
++  " %{mfix-cortex-a53-835769:--fix-cortex-a53-835769}"
++#endif
++
++#ifdef TARGET_FIX_ERR_A53_843419_DEFAULT
++#define CA53_ERR_843419_SPEC \
++  " %{!mno-fix-cortex-a53-843419:--fix-cortex-a53-843419}"
++#else
++#define CA53_ERR_843419_SPEC \
++  " %{mfix-cortex-a53-843419:--fix-cortex-a53-843419}"
++#endif
++
++#undef LINK_SPEC
++#define LINK_SPEC "%{G*} %{R*} %{h*}	\
++   %{static:-Bstatic}					\
++   %{shared:-shared}					\
++   %{symbolic:-Bsymbolic}				\
++   %{!static:%{rdynamic:-export-dynamic}}	\
++   -dynamic-linker " GNU_USER_DYNAMIC_LINKER "	\
++   %{mbig-endian:-EB} %{mlittle-endian:-EL} -X	\
++  -maarch64elf%{mabi=ilp32*:32}%{mbig-endian:b}" \
++  CA53_ERR_835769_SPEC \
++  CA53_ERR_843419_SPEC
++
+diff --git a/gcc/config/aarch64/t-sol2 b/gcc/config/aarch64/t-sol2
+new file mode 100644
+index 0000000..5aa36df
+--- /dev/null
++++ b/gcc/config/aarch64/t-sol2
+@@ -0,0 +1,25 @@
++# Copyright (C) 2000, 2001, 2003, 2004, 2005 Free Software Foundation, Inc.
++#
++# This file is part of GCC.
++#
++# GCC is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 3, or (at your option)
++# any later version.
++#
++# GCC is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with GCC; see the file COPYING3.  If not see
++# <http://www.gnu.org/licenses/>.
++
++# Compile crtbeginS.o and crtendS.o with pic.
++CRTSTUFF_T_CFLAGS_S = -fPIC
++
++# Compile libgcc2.a with pic.
++TARGET_LIBGCC2_CFLAGS += -fPIC
++
++EXTRA_MULTILIB_PARTS =
+diff --git a/gcc/config/alpha/alpha.c b/gcc/config/alpha/alpha.c
+index 731a966..b285a99 100644
+--- a/gcc/config/alpha/alpha.c
++++ b/gcc/config/alpha/alpha.c
+@@ -9952,6 +9952,27 @@ alpha_atomic_assign_expand_fenv (tree *hold, tree *clear, tree *update)
+ }
+ 
+ /* Initialize the GCC target structure.  */
++#ifdef SUBTARGET_ATTRIBUTE_TABLE
++/* Table of valid machine attributes.  */
++static const struct attribute_spec alpha_attribute_table[] =
++{
++  /* { name, min_len, max_len, decl_req, type_req, fn_type_req, handler,
++       do_diagnostic } */
++  SUBTARGET_ATTRIBUTE_TABLE,
++  { NULL,        0, 0, false, false, false, NULL, false }
++};
++#endif
++
++#ifdef SUBTARGET_INSERT_ATTRIBUTES
++#undef TARGET_INSERT_ATTRIBUTES
++#define TARGET_INSERT_ATTRIBUTES SUBTARGET_INSERT_ATTRIBUTES
++#endif
++
++#ifdef SUBTARGET_ATTRIBUTE_TABLE
++#undef TARGET_ATTRIBUTE_TABLE
++#define TARGET_ATTRIBUTE_TABLE alpha_attribute_table
++#endif
++
+ #if TARGET_ABI_OPEN_VMS
+ # undef TARGET_ATTRIBUTE_TABLE
+ # define TARGET_ATTRIBUTE_TABLE vms_attribute_table
+diff --git a/gcc/config/alpha/sol2.h b/gcc/config/alpha/sol2.h
+new file mode 100644
+index 0000000..2f258d2
+--- /dev/null
++++ b/gcc/config/alpha/sol2.h
+@@ -0,0 +1,108 @@
++/* Definitions of target machine for GCC, for SPARC running Solaris 2
++   Copyright 1992, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2004, 2005,
++   2006, 2007, 2008, 2010 Free Software Foundation, Inc.
++   Contributed by Ron Guilmette (rfg@netcom.com).
++   Additional changes by David V. Henkel-Wallace (gumby@cygnus.com).
++
++This file is part of GCC.
++
++GCC is free software; you can redistribute it and/or modify
++it under the terms of the GNU General Public License as published by
++the Free Software Foundation; either version 3, or (at your option)
++any later version.
++
++GCC is distributed in the hope that it will be useful,
++but WITHOUT ANY WARRANTY; without even the implied warranty of
++MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++GNU General Public License for more details.
++
++You should have received a copy of the GNU General Public License
++along with GCC; see the file COPYING3.  If not see
++<http://www.gnu.org/licenses/>.  */
++
++/* We are compiling for Solaris 2 now.  */
++#undef TARGET_DEFAULT
++#define TARGET_DEFAULT MASK_FPREGS
++
++/* Show that we need a GP when profiling.  */
++#undef TARGET_PROFILING_NEEDS_GP
++#define TARGET_PROFILING_NEEDS_GP 1
++
++#define CPP_SPEC "%{pthread:-D_REENTRANT}"
++#define GNU_USER_DYNAMIC_LINKER "/lib/ld.so.1"
++
++#undef LINK_SPEC
++#define LINK_SPEC  "%{G*} %{R*}  %{h*}		\
++   %{static:-Bstatic}				\
++   %{shared:-shared}				\
++   %{symbolic:-Bsymbolic}			\
++   %{rdynamic:-export-dynamic}			\
++   -dynamic-linker " GNU_USER_DYNAMIC_LINKER "	\
++   %{relax:-relax}				\
++   -X						\
++   -melf64alpha"
++
++#undef TARGET_SUN_TLS
++#define TARGET_SUN_TLS 1
++
++#define ASM_OUTPUT_CALL(FILE, FN)			        \
++  do								\
++    {								\
++      fprintf (FILE, "\t.set macro\n");				\
++      fprintf (FILE, "\tjsr\t$26, ");				\
++      print_operand (FILE, XEXP (DECL_RTL (FN), 0), 0);		\
++      fprintf (FILE, "\n");					\
++      fprintf (FILE, "\tldgp\t$29, 0($26)\n");			\
++      fprintf (FILE, "\t.set nomacro\n");			\
++    }								\
++  while (0)
++
++#undef DEFAULT_SIGNED_CHAR
++#define DEFAULT_SIGNED_CHAR 1
++
++#undef WCHAR_TYPE
++#define WCHAR_TYPE "int"
++#undef WCHAR_TYPE_SIZE
++#define WCHAR_TYPE_SIZE 32
++
++#undef	WINT_TYPE
++#define	WINT_TYPE "int"
++#undef	WINT_TYPE_SIZE
++#define	WINT_TYPE_SIZE 32
++
++#undef	CC1_SPEC
++#define CC1_SPEC "%{!fno-PIC:-fPIC}"
++
++#undef LIB_SPEC
++#define LIB_SPEC  "%{shared:-lc -lgcc}%{!shared:%{profile:-lc -lgcc}%{!profile:-lc -lgcc}} "
++
++#undef STARTFILE_SPEC
++#define STARTFILE_SPEC \
++    "%{!shared:%{!symbolic: crt1.o%s}} \
++    crti.o%s \
++    %{shared|pie:crtbeginS.o%s;:crtbegin.o%s}"
++
++#undef ENDFILE_SPEC
++#define ENDFILE_SPEC \
++    "%{Ofast|ffast-math|funsafe-math-optimizations:crtfastmath.o%s} \
++    %{shared|pie:crtendS.o%s;:crtend.o%s} \
++    crtn.o%s"
++
++/* Register the Solaris-specific #pragma directives.  */
++#define REGISTER_TARGET_PRAGMAS() solaris_register_pragmas ()
++
++#undef INIT_SECTION_ASM_OP
++#define INIT_SECTION_ASM_OP	"\t.section\t.init, \"ax\""
++
++#undef FINI_SECTION_ASM_OP
++#define FINI_SECTION_ASM_OP	"\t.section\t.fini, \"ax\""
++
++/* This macro closes up a function definition for the assembler.  */
++#undef ASM_DECLARE_FUNCTION_SIZE
++#define ASM_DECLARE_FUNCTION_SIZE(FILE, NAME, DECL)		\
++  do								\
++    {								\
++      alpha_end_function(FILE,NAME,DECL);			\
++      solaris_output_init_fini (FILE, DECL);			\
++    }								\
++  while (0)
+diff --git a/gcc/config/alpha/t-sol2 b/gcc/config/alpha/t-sol2
+new file mode 100644
+index 0000000..5aa36df
+--- /dev/null
++++ b/gcc/config/alpha/t-sol2
+@@ -0,0 +1,25 @@
++# Copyright (C) 2000, 2001, 2003, 2004, 2005 Free Software Foundation, Inc.
++#
++# This file is part of GCC.
++#
++# GCC is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 3, or (at your option)
++# any later version.
++#
++# GCC is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with GCC; see the file COPYING3.  If not see
++# <http://www.gnu.org/licenses/>.
++
++# Compile crtbeginS.o and crtendS.o with pic.
++CRTSTUFF_T_CFLAGS_S = -fPIC
++
++# Compile libgcc2.a with pic.
++TARGET_LIBGCC2_CFLAGS += -fPIC
++
++EXTRA_MULTILIB_PARTS =
+diff --git a/gcc/config/sol2-c.c b/gcc/config/sol2-c.c
+index a73384c..12c0407 100644
+--- a/gcc/config/sol2-c.c
++++ b/gcc/config/sol2-c.c
+@@ -273,6 +273,11 @@ solaris_pragma_fini (cpp_reader *pfile ATTRIBUTE_UNUSED)
+     }
+ }
+ 
++static void
++solaris_pragma_ident (cpp_reader *pfile ATTRIBUTE_UNUSED)
++{
++}
++
+ /* Register Solaris-specific #pragma directives.  */
+ 
+ void
+@@ -281,4 +286,5 @@ solaris_register_pragmas (void)
+   c_register_pragma_with_expansion (0, "align", solaris_pragma_align);
+   c_register_pragma (0, "init", solaris_pragma_init);
+   c_register_pragma (0, "fini", solaris_pragma_fini);
++  c_register_pragma (0, "ident", solaris_pragma_ident);
+ }
+diff --git a/gcc/config/sol2.h b/gcc/config/sol2.h
+index a08ad3c..8ed9222 100644
+--- a/gcc/config/sol2.h
++++ b/gcc/config/sol2.h
+@@ -339,6 +339,7 @@ along with GCC; see the file COPYING3.  If not see
+ 
+ /* collect2.c can only parse GNU nm -n output.  Solaris nm needs -png to
+    produce the same format.  */
++#undef NM_FLAGS
+ #define NM_FLAGS "-png"
+ 
+ /* The system headers under Solaris 2 are C++-aware since 2.0.  */
+diff --git a/gcc/configure b/gcc/configure
+index 90f78d2..1b225e3 100755
+--- a/gcc/configure
++++ b/gcc/configure
+@@ -23462,6 +23462,14 @@ foo:	.long	25
+ 	tls_first_major=2
+ 	tls_first_minor=13
+ 	tls_as_opt=--fatal-warnings
++	case "$target" in
++		alpha*-*-solaris2.*)
++			on_solaris=yes
++			tga_func=__tls_get_addr
++		;;
++		*)
++		;;
++	esac
+ 	;;
+   cris-*-*|crisv32-*-*)
+     conftest_s='
+@@ -24164,7 +24172,7 @@ fi
+     ;;
+ 
+   # All TARGET_ABI_OSF targets.
+-  alpha*-*-linux* | alpha*-*-*bsd*)
++  alpha*-*-linux* | alpha*-*-*bsd* | alpha*-*-solaris2*)
+     { $as_echo "$as_me:${as_lineno-$LINENO}: checking assembler for explicit relocation support" >&5
+ $as_echo_n "checking assembler for explicit relocation support... " >&6; }
+ if test "${gcc_cv_as_alpha_explicit_relocs+set}" = set; then :
+diff --git a/gcc/configure.ac b/gcc/configure.ac
+index 0009d87..e78f8aa 100644
+--- a/gcc/configure.ac
++++ b/gcc/configure.ac
+@@ -2981,6 +2981,14 @@ foo:	.long	25
+ 	tls_first_major=2
+ 	tls_first_minor=13
+ 	tls_as_opt=--fatal-warnings
++	case "$target" in
++		alpha*-*-solaris2.*)
++			on_solaris=yes
++			tga_func=__tls_get_addr
++		;;
++		*)
++		;;
++	esac
+ 	;;
+   cris-*-*|crisv32-*-*)
+     conftest_s='
+@@ -3623,7 +3631,7 @@ AS_HELP_STRING([--disable-fix-cortex-a53-843419],
+     ;;
+ 
+   # All TARGET_ABI_OSF targets.
+-  alpha*-*-linux* | alpha*-*-*bsd*)
++  alpha*-*-linux* | alpha*-*-*bsd* | alpha*-*-solaris2*)
+     gcc_GAS_CHECK_FEATURE([explicit relocation support],
+ 	gcc_cv_as_alpha_explicit_relocs, [2,12,0],,
+ [	.set nomacro
+diff --git a/gcc/genmddeps.c b/gcc/genmddeps.c
+index baf9063..a900de0 100644
+--- a/gcc/genmddeps.c
++++ b/gcc/genmddeps.c
+@@ -15,7 +15,11 @@
+    along with this program; see the file COPYING3.  If not see
+    <http://www.gnu.org/licenses/>.  */
+ 
++#ifdef GENERATOR_FILE
+ #include "bconfig.h"
++#else
++#include "config.h"
++#endif
+ #include "system.h"
+ #include "coretypes.h"
+ #include "errors.h"
+diff --git a/libgcc/config.host b/libgcc/config.host
+index b4b0665..4ef7018 100644
+--- a/libgcc/config.host
++++ b/libgcc/config.host
+@@ -282,6 +282,9 @@ case ${host} in
+     extra_parts="$extra_parts crtbeginS.o crtendS.o"
+   else
+     case ${host} in
++      aarch64*-*-solaris2* | alpha*-*-solaris2*)
++        extra_parts="crtbegin.o crtend.o crtbeginS.o crtendS.o"
++        ;;
+       i?86-*-solaris2.1[0-9]* | x86_64-*-solaris2.1[0-9]*)
+         # Solaris 10+/x86 provides crt1.o, crti.o, crtn.o, and gcrt1.o as
+         # part of the base system.
+@@ -309,6 +312,9 @@ case ${host} in
+ esac
+ 
+ case ${host} in
++aarch64*-*-solaris2* | alpha*-*-solaris2* | arm*-*-solaris2*)
++  enable_execute_stack=enable-execute-stack-empty.c;
++  ;;
+ *-*-darwin* | *-*-dragonfly* | *-*-freebsd* | *-*-netbsd* | *-*-openbsd* | \
+   *-*-solaris2*)
+   enable_execute_stack=enable-execute-stack-mprotect.c
+@@ -334,11 +340,20 @@ aarch64*-*-linux*)
+ 	tmake_file="${tmake_file} ${cpu_type}/t-aarch64"
+ 	tmake_file="${tmake_file} ${cpu_type}/t-softfp t-softfp t-crtfm"
+ 	;;
++aarch64*-*-solaris2*)
++	tmake_file="${tmake_file} ${cpu_type}/t-aarch64 aarch64/t-sol2"
++	tmake_file="${tmake_file} ${cpu_type}/t-softfp t-softfp"
++	extra_parts="$extra_parts crtfastmath.o"
++	;;
+ alpha*-*-linux*)
+ 	tmake_file="${tmake_file} alpha/t-alpha alpha/t-ieee t-crtfm alpha/t-linux"
+ 	extra_parts="$extra_parts crtfastmath.o"
+ 	md_unwind_header=alpha/linux-unwind.h
+ 	;;
++alpha*-*-solaris2*)
++	tmake_file="${tmake_file} alpha/t-alpha alpha/t-ieee t-crtfm alpha/t-sol2"
++	extra_parts="$extra_parts crtfastmath.o"
++	;;
+ alpha*-*-freebsd*)
+ 	tmake_file="${tmake_file} alpha/t-alpha alpha/t-ieee t-crtfm"
+ 	extra_parts="$extra_parts crtbeginT.o crtfastmath.o"
+diff --git a/libgcc/config/alpha/t-sol2 b/libgcc/config/alpha/t-sol2
+new file mode 100644
+index 0000000..ea3fa63
+--- /dev/null
++++ b/libgcc/config/alpha/t-sol2
+@@ -0,0 +1,6 @@
++# We need to use -fPIC when we are using gcc to compile the routines in
++# crtstuff.c.  This is only really needed when we are going to use gcc/g++
++# to produce a shared library, but since we don't know ahead of time when
++# we will be doing that, we just always use -fPIC when compiling the
++# routines in crtstuff.c.
++CRTSTUFF_T_CFLAGS = $(PICFLAG)
+diff --git a/libstdc++-v3/src/c++98/locale_init.cc b/libstdc++-v3/src/c++98/locale_init.cc
+index 0a95b9f..4023440 100644
+--- a/libstdc++-v3/src/c++98/locale_init.cc
++++ b/libstdc++-v3/src/c++98/locale_init.cc
+@@ -69,12 +69,12 @@ namespace
+ 
+   using namespace std;
+ 
+-  typedef char fake_locale_Impl[sizeof(locale::_Impl)]
+-  __attribute__ ((aligned(__alignof__(locale::_Impl))));
++  typedef char fake_locale_Impl[sizeof(std::locale::_Impl)]
++  __attribute__ ((aligned(__alignof__(std::locale::_Impl))));
+   fake_locale_Impl c_locale_impl;
+ 
+-  typedef char fake_locale[sizeof(locale)]
+-  __attribute__ ((aligned(__alignof__(locale))));
++  typedef char fake_locale[sizeof(std::locale)]
++  __attribute__ ((aligned(__alignof__(std::locale))));
+   fake_locale c_locale;
+ 
+   typedef char fake_name_vec[sizeof(char*)]
+@@ -211,7 +211,7 @@ namespace
+   fake_codecvt_c32 codecvt_c32;
+ #endif
+ 
+-  // Storage for "C" locale caches.
++  // Storage for "C" std::locale caches.
+   typedef char fake_num_cache_c[sizeof(std::__numpunct_cache<char>)]
+   __attribute__ ((aligned(__alignof__(std::__numpunct_cache<char>))));
+   fake_num_cache_c numpunct_cache_c;
+-- 
+2.7.4.1.g5468f9e
+
+diff --git a/gcc/Makefile.in b/gcc/Makefile.in
+index 07c6f0a..c44cf90 100644
+--- a/gcc/Makefile.in
++++ b/gcc/Makefile.in
+@@ -2596,7 +2596,11 @@ $(genprog:%=build/gen%$(build_exeext)): build/gen%$(build_exeext): build/gen%.o
+ # any system header is included.
+ gengtype-lex.c : gengtype-lex.l
+ 	-$(FLEX) $(FLEXFLAGS) -o$@ $< && { \
+-	  echo '#include "bconfig.h"' > $@.tmp; \
++	  echo '#ifdef GENERATOR_FILE' > $@.tmp; \
++	  echo '#include "bconfig.h"' >> $@.tmp; \
++	  echo '#else' >> $@.tmp; \
++	  echo '#include "config.h"' >> $@.tmp; \
++	  echo '#endif' >> $@.tmp; \
+ 	  cat $@ >> $@.tmp; \
+ 	  mv $@.tmp $@; \
+ 	}
