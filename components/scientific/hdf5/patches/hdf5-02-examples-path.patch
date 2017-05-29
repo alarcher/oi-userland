@@ -203,42 +203,6 @@
    may fail or generate HDF5 errors because the script commands in c/run-c-ex.sh 
    fail to create test directories red, blue, and u2w.  Moving the '!' in lines 
    67, 70, 73 of run-c-ex.sh will fix the problem.  For example the script command 
---- hdf5-1.8.18/bin/pkgscrpts/hdf5-1.8.16-1-x86_64-szip.spec.orig	2017-02-03 21:32:25.704058857 +0100
-+++ hdf5-1.8.18/bin/pkgscrpts/hdf5-1.8.16-1-x86_64-szip.spec	2017-02-03 21:32:25.709584196 +0100
-@@ -436,20 +436,20 @@
- %{_includedir}/szip_adpt.h
- %{_includedir}/szlib.h
- %defattr(0755,root,root)
--%dir %{_datadir}/hdf5_examples
--%{_datadir}/hdf5_examples/*.sh
--%{_datadir}/hdf5_examples/*/*.sh
--%{_datadir}/hdf5_examples/*/*/*.sh
-+%dir %{_datadir}/hdf5/examples
-+%{_datadir}/hdf5/examples/*.sh
-+%{_datadir}/hdf5/examples/*/*.sh
-+%{_datadir}/hdf5/examples/*/*/*.sh
- %defattr(0644,root,root)
--%{_datadir}/hdf5_examples/README
--%{_datadir}/hdf5_examples/*/*.c
--%{_datadir}/hdf5_examples/*/*.f90
--%{_datadir}/hdf5_examples/*/*.cpp
--%{_datadir}/hdf5_examples/*/*/*.c
--%{_datadir}/hdf5_examples/*/*/*.h
--%{_datadir}/hdf5_examples/*/*/*.txt
--%{_datadir}/hdf5_examples/*/*/*.f90
--%{_datadir}/hdf5_examples/*/*/*.cpp
-+%{_datadir}/hdf5/examples/README
-+%{_datadir}/hdf5/examples/*/*.c
-+%{_datadir}/hdf5/examples/*/*.f90
-+%{_datadir}/hdf5/examples/*/*.cpp
-+%{_datadir}/hdf5/examples/*/*/*.c
-+%{_datadir}/hdf5/examples/*/*/*.h
-+%{_datadir}/hdf5/examples/*/*/*.txt
-+%{_datadir}/hdf5/examples/*/*/*.f90
-+%{_datadir}/hdf5/examples/*/*/*.cpp
- 
- %files static
- 
 --- hdf5-1.8.18/examples/Makefile.am.orig	2017-02-03 21:32:25.714517030 +0100
 +++ hdf5-1.8.18/examples/Makefile.am	2017-02-03 21:32:25.717558211 +0100
 @@ -82,8 +82,8 @@

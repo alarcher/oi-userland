@@ -14,18 +14,18 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           hdf5
-COMPONENT_VERSION=        1.8.18
+COMPONENT_VERSION=        1.10.1
 COMPONENT_FMRI=           library/c++/hdf5
 COMPONENT_SUMMARY= \
 	HDF5 - Data model, library, and file format for storing and managing data
 COMPONENT_PROJECT_URL=    http://www.hdfgroup.org
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:cdb195ad8d9e6782acf24b2488061289f615628c2ccda8457b0a0c3fb7a8a063
+  sha256:9c5ce1e33d2463fb1a42dd04daacbc22104e57676e2204e3d66b1ef54b88ebf2
 COMPONENT_ARCHIVE_URL= \
-  https://support.hdfgroup.org/ftp/HDF5/current18/src/$(COMPONENT_ARCHIVE)
+  https://www.hdfgroup.org/package/bzip2/?wpdmdl=4300
 COMPONENT_LICENSE=        NCSA
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -41,6 +41,8 @@ CONFIGURE_OPTIONS  +=		--enable-cxx
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
+
+test:	$(TEST_32_and_64)
 
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
