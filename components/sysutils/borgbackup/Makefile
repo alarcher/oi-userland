@@ -15,20 +15,20 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		borgbackup
-COMPONENT_VERSION=	1.0.10
+COMPONENT_VERSION=	1.1.1
 COMPONENT_PROJECT_URL=	https://borgbackup.readthedocs.org/en/stable/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:978f28f144924005219da989b1b436a32b2735a34c6d0dc15bb0a1ccffad59e9
+    sha256:a5092cfdc57b7f85ce192d64642f94dc0c09ee152a735ae341942532302d3346
 COMPONENT_ARCHIVE_URL=	https://github.com/borgbackup/borg/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 # Borg requirement
 PYTHON_VERSIONS=	3.4
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_FETCH_USER_AGENT=wget
 
