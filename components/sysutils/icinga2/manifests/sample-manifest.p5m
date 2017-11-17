@@ -1,0 +1,210 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2017 <contributor>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=etc/icinga2/conf.d/app.conf
+file path=etc/icinga2/conf.d/commands.conf
+file path=etc/icinga2/conf.d/downtimes.conf
+file path=etc/icinga2/conf.d/groups.conf
+file path=etc/icinga2/conf.d/hosts.conf
+file path=etc/icinga2/conf.d/notifications.conf
+file path=etc/icinga2/conf.d/satellite.conf
+file path=etc/icinga2/conf.d/services.conf
+file path=etc/icinga2/conf.d/templates.conf
+file path=etc/icinga2/conf.d/timeperiods.conf
+file path=etc/icinga2/conf.d/users.conf
+file path=etc/icinga2/constants.conf
+file path=etc/icinga2/features-available/api.conf
+file path=etc/icinga2/features-available/checker.conf
+file path=etc/icinga2/features-available/command.conf
+file path=etc/icinga2/features-available/compatlog.conf
+file path=etc/icinga2/features-available/debuglog.conf
+file path=etc/icinga2/features-available/gelf.conf
+file path=etc/icinga2/features-available/graphite.conf
+file path=etc/icinga2/features-available/influxdb.conf
+file path=etc/icinga2/features-available/livestatus.conf
+file path=etc/icinga2/features-available/mainlog.conf
+file path=etc/icinga2/features-available/notification.conf
+file path=etc/icinga2/features-available/opentsdb.conf
+file path=etc/icinga2/features-available/perfdata.conf
+file path=etc/icinga2/features-available/statusdata.conf
+file path=etc/icinga2/features-available/syslog.conf
+file path=etc/icinga2/icinga2.conf
+file path=etc/icinga2/init.conf
+file path=etc/icinga2/repository.d/README
+file path=etc/icinga2/scripts/mail-host-notification.sh
+file path=etc/icinga2/scripts/mail-service-notification.sh
+file path=etc/icinga2/zones.conf
+file path=etc/icinga2/zones.d/README
+file path=usr/etc/bash_completion.d/icinga2
+link path=usr/etc/icinga2/features-enabled/checker.conf \
+    target=../features-available/checker.conf
+link path=usr/etc/icinga2/features-enabled/mainlog.conf \
+    target=../features-available/mainlog.conf
+link path=usr/etc/icinga2/features-enabled/notification.conf \
+    target=../features-available/notification.conf
+link path=usr/lib/$(MACH64)/icinga2/libbase.so \
+    target=libbase.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/icinga2/libbase.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/icinga2/libchecker.so \
+    target=libchecker.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/icinga2/libchecker.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/icinga2/libcli.so \
+    target=libcli.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/icinga2/libcli.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/icinga2/libcompat.so \
+    target=libcompat.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/icinga2/libcompat.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/icinga2/libconfig.so \
+    target=libconfig.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/icinga2/libconfig.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/icinga2/libexecvpe.so \
+    target=libexecvpe.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/icinga2/libexecvpe.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/icinga2/libicinga.so \
+    target=libicinga.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/icinga2/libicinga.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/icinga2/liblivestatus.so \
+    target=liblivestatus.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/icinga2/liblivestatus.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/icinga2/libmethods.so \
+    target=libmethods.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/icinga2/libmethods.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/icinga2/libmmatch.so \
+    target=libmmatch.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/icinga2/libmmatch.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/icinga2/libnotification.so \
+    target=libnotification.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/icinga2/libnotification.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/icinga2/libperfdata.so \
+    target=libperfdata.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/icinga2/libperfdata.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/icinga2/libremote.so \
+    target=libremote.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/icinga2/libremote.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/icinga2/libsocketpair.so \
+    target=libsocketpair.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/icinga2/libsocketpair.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/icinga2/libyajl.so target=libyajl.so.2
+link path=usr/lib/$(MACH64)/icinga2/libyajl.so.2 target=libyajl.so.2.1.0
+file path=usr/lib/$(MACH64)/icinga2/libyajl.so.2.1.0
+file path=usr/lib/$(MACH64)/icinga2/sbin/icinga2
+file path=usr/lib/nagios/plugins/check_nscp_api
+file path=usr/sbin/icinga2
+file path=usr/share/doc/icinga2/AUTHORS
+file path=usr/share/doc/icinga2/CHANGELOG.md
+file path=usr/share/doc/icinga2/COPYING
+file path=usr/share/doc/icinga2/COPYING.Exceptions
+file path=usr/share/doc/icinga2/NEWS
+file path=usr/share/doc/icinga2/README.md
+file path=usr/share/doc/icinga2/markdown/01-about.md
+file path=usr/share/doc/icinga2/markdown/02-getting-started.md
+file path=usr/share/doc/icinga2/markdown/03-monitoring-basics.md
+file path=usr/share/doc/icinga2/markdown/04-configuring-icinga-2.md
+file path=usr/share/doc/icinga2/markdown/05-service-monitoring.md
+file path=usr/share/doc/icinga2/markdown/06-distributed-monitoring.md
+file path=usr/share/doc/icinga2/markdown/07-agent-based-monitoring.md
+file path=usr/share/doc/icinga2/markdown/08-advanced-topics.md
+file path=usr/share/doc/icinga2/markdown/09-object-types.md
+file path=usr/share/doc/icinga2/markdown/10-icinga-template-library.md
+file path=usr/share/doc/icinga2/markdown/11-cli-commands.md
+file path=usr/share/doc/icinga2/markdown/12-icinga2-api.md
+file path=usr/share/doc/icinga2/markdown/13-addons.md
+file path=usr/share/doc/icinga2/markdown/14-features.md
+file path=usr/share/doc/icinga2/markdown/15-troubleshooting.md
+file path=usr/share/doc/icinga2/markdown/16-upgrading-icinga-2.md
+file path=usr/share/doc/icinga2/markdown/17-language-reference.md
+file path=usr/share/doc/icinga2/markdown/18-library-reference.md
+file path=usr/share/doc/icinga2/markdown/19-script-debugger.md
+file path=usr/share/doc/icinga2/markdown/20-development.md
+file path=usr/share/doc/icinga2/markdown/21-selinux.md
+file path=usr/share/doc/icinga2/markdown/22-migrating-from-icinga-1x.md
+file path=usr/share/doc/icinga2/markdown/23-appendix.md
+file path=usr/share/doc/icinga2/markdown/images/advanced-topics/icinga2_external_checks_freshness_icingaweb2.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_distributed_bottom_up.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_distributed_endpoints.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_distributed_roles.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_distributed_scenarios_ha_master_clients.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_distributed_scenarios_master_clients.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_distributed_scenarios_master_satellite_client.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_distributed_top_down_command_endpoint.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_distributed_top_down_config_sync.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_distributed_windows_client_disk_icingaweb2.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_distributed_windows_nscp.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_distributed_windows_nscp_api_drivesize_icingaweb2.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_distributed_windows_nscp_counter_icingaweb2.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_distributed_zones.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_windows_cmd_admin_net_start_stop.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_windows_running_service.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_windows_setup_installer_01.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_windows_setup_installer_02.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_windows_setup_installer_03.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_windows_setup_installer_04.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_windows_setup_installer_05.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_windows_setup_wizard_01.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_windows_setup_wizard_02.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_windows_setup_wizard_03.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_windows_setup_wizard_04.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_windows_setup_wizard_05_nsclient_01.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_windows_setup_wizard_05_nsclient_02.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_windows_setup_wizard_05_nsclient_03.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_windows_setup_wizard_05_nsclient_04.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_windows_setup_wizard_05_nsclient_05.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_windows_setup_wizard_05_nsclient_06.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_windows_setup_wizard_05_nsclient_07.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_windows_setup_wizard_06.png
+file path=usr/share/doc/icinga2/markdown/images/distributed-monitoring/icinga2_windows_setup_wizard_examine_config.png
+file path=usr/share/doc/icinga2/markdown/images/getting-started/mariadb-centos7.png
+file path=usr/share/doc/icinga2/markdown/images/getting-started/nano-syntax.png
+file path=usr/share/doc/icinga2/markdown/images/getting-started/postgr-import-ido.png
+file path=usr/share/doc/icinga2/markdown/images/getting-started/vim-syntax.png
+file path=usr/share/doc/icinga2/markdown/images/icinga2-api/icinga2_api_icinga_studio_connect.png
+file path=usr/share/doc/icinga2/markdown/images/icinga2-api/icinga2_api_icinga_studio_overview.png
+file path=usr/share/icinga2/include/command-icinga.conf
+file path=usr/share/icinga2/include/command-nscp-local.conf
+file path=usr/share/icinga2/include/command-plugins-manubulon.conf
+file path=usr/share/icinga2/include/command-plugins-windows.conf
+file path=usr/share/icinga2/include/command-plugins.conf
+file path=usr/share/icinga2/include/hangman
+file path=usr/share/icinga2/include/itl
+file path=usr/share/icinga2/include/manubulon
+file path=usr/share/icinga2/include/nscp
+file path=usr/share/icinga2/include/plugins
+file path=usr/share/icinga2/include/plugins-contrib
+file path=usr/share/icinga2/include/plugins-contrib.d/databases.conf
+file path=usr/share/icinga2/include/plugins-contrib.d/hardware.conf
+file path=usr/share/icinga2/include/plugins-contrib.d/icingacli.conf
+file path=usr/share/icinga2/include/plugins-contrib.d/ipmi.conf
+file path=usr/share/icinga2/include/plugins-contrib.d/logmanagement.conf
+file path=usr/share/icinga2/include/plugins-contrib.d/metrics.conf
+file path=usr/share/icinga2/include/plugins-contrib.d/network-components.conf
+file path=usr/share/icinga2/include/plugins-contrib.d/network-services.conf
+file path=usr/share/icinga2/include/plugins-contrib.d/operating-system.conf
+file path=usr/share/icinga2/include/plugins-contrib.d/raid-controller.conf
+file path=usr/share/icinga2/include/plugins-contrib.d/smart-attributes.conf
+file path=usr/share/icinga2/include/plugins-contrib.d/storage.conf
+file path=usr/share/icinga2/include/plugins-contrib.d/virtualization.conf
+file path=usr/share/icinga2/include/plugins-contrib.d/vmware.conf
+file path=usr/share/icinga2/include/plugins-contrib.d/web.conf
+file path=usr/share/icinga2/include/windows-plugins
+file path=usr/share/man/man8/icinga2.8
