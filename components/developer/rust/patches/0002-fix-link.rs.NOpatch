@@ -1,0 +1,22 @@
+diff --git a/src/librustc_trans/back/linker.rs b/src/librustc_trans/back/linker.rs
+index a147b59..c74c911 100644
+--- a/src/librustc_trans/back/linker.rs
++++ b/src/librustc_trans/back/linker.rs
+@@ -199,7 +199,7 @@ impl<'a> Linker for GnuLinker<'a> {
+     }
+ 
+     fn no_default_libraries(&mut self) {
+-        self.cmd.arg("-nodefaultlibs");
++        // self.cmd.arg("-nodefaultlibs");
+     }
+ 
+     fn build_dylib(&mut self, out_filename: &Path) {
+@@ -213,6 +213,8 @@ impl<'a> Linker for GnuLinker<'a> {
+             // the right `-Wl,-install_name` with an `@rpath` in it.
+             if self.sess.opts.cg.rpath ||
+                self.sess.opts.debugging_opts.osx_rpath_install_name {
++                // Ensure we can use install_name_tool later to fixup.
++                self.cmd.arg("-Wl,-headerpad_max_install_names");
+                 let mut v = OsString::from("-Wl,-install_name,@rpath/");
+                 v.push(out_filename.file_name().unwrap());
+                 self.cmd.arg(&v);
