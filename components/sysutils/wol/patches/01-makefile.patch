@@ -1,0 +1,28 @@
+--- wol.c-b9d89af91a8bd70770d272205020c3dc32c94dff/Makefile.orig	2018-01-30 22:45:07.886240243 +0000
++++ wol.c-b9d89af91a8bd70770d272205020c3dc32c94dff/Makefile	2018-01-30 22:16:43.333628351 +0000
+@@ -21,7 +21,7 @@
+ SOURCES = wol.c
+ MANPAGE = wol.1
+ OBJECTS = $(SOURCES:.c=.o)
+-CFLAGS = -Wall -Os -DNDEBUG
++CFLAGS += -Wall -Os -DNDEBUG
+ PREFIX ?= /usr/local
+ 
+ .PHONY: install uninstall clean mrproper
+@@ -35,8 +35,8 @@
+ 	$(RM) $(PROGRAM)
+ 
+ install:
+-	install -m 0755 $(PROGRAM) $(PREFIX)/bin
+-	install -m 0644 $(MANPAGE) $(PREFIX)/share/man/man1
++	install -m 0755 $(PROGRAM) $(DESTDIR)$(PREFIX)/bin
++	install -m 0644 $(MANPAGE) $(DESTDIR)$(PREFIX)/share/man/man1
+ 
+ uninstall:
+ 	$(RM) $(PREFIX)/bin/$(PROGRAM)
+@@ -46,4 +46,4 @@
+ 	$(COMPILE.c) $< -o $@
+ 
+ $(PROGRAM): $(OBJECTS)
+-	$(LINK.o) -o $@ $<
++	$(LINK.o) -o $@ $< -lnsl -lsocket
