@@ -26,20 +26,20 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rustc
-COMPONENT_VERSION=	1.17.0
+COMPONENT_VERSION=	1.23.0
 COMPONENT_FMRI=	developer/lang/rust
-COMPONENT_SUMMARY=	Rust
+COMPONENT_SUMMARY=	Safe, concurrent, practical languag
 COMPONENT_CLASSIFICATION=	Development/Rust
 COMPONENT_PROJECT_URL=	http://www.rust-lang.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4baba3895b75f2492df6ce5a28a916307ecd1c088dc1fd02dbfa8a8e86174f87
+    sha256:7464953871dcfdfa8afcc536916a686dd156a83339d8ec4d5cb4eb2fe146cb91
 # 1.16    sha256:f966b31eb1cd9bd2df817c391a338eeb5b9253ae0a19bf8a11960c560f96e8b4
 COMPONENT_ARCHIVE_URL=	http://static.rust-lang.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	MIT or Apache-2.0
 
-RUST_STAGE0_VER=        1.16.0
+RUST_STAGE0_VER=        1.22.1
 RUST_ARCH:=             x86_64-sun-solaris
 
 COMPONENT_NAME_1    = rust
@@ -47,7 +47,7 @@ COMPONENT_VERSION_1 = $(RUST_STAGE0_VER)
 COMPONENT_SRC_1     = $(COMPONENT_NAME_1)-$(COMPONENT_VERSION_1)-$(RUST_ARCH)
 COMPONENT_ARCHIVE_1  = $(COMPONENT_SRC_1).tar.gz
 COMPONENT_ARCHIVE_HASH_1 =	\
-    sha256:612781994ca2f06d5d36885a7c0f9da2ecae39e1634193ad661ea4fd26cd1428
+    sha256:e512206e0c5bce691421f88b2479d4930351468f1e81e901d46f58bee42f7400
 COMPONENT_ARCHIVE_URL_1 = https://us-east.manta.joyent.com/pkgsrc/public/pkg-bootstraps/$(COMPONENT_ARCHIVE_1)
 SOURCE_DIR_1	= $(COMPONENT_DIR)/$(COMPONENT_SRC_1)
 RUST_BOOTSTRAP_PATH = $(SOURCE_DIR_1)
@@ -56,11 +56,14 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=$(PATH.gnu):/opt/local/bin
+PATH=$(PATH.gnu)
+
+COMPONENT_PRE_CONFIGURE_ACTION = \
+	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_ENV += CC=clang
 CONFIGURE_ENV += CXX=clang++
-CONFIGURE_ENV += PATH=$(PATH)
+# CONFIGURE_ENV += PATH=$(PATH)
 
 CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
@@ -69,21 +72,41 @@ CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --docdir=/usr/share/doc
 CONFIGURE_OPTIONS += --infodir=/usr/share/info
 CONFIGURE_OPTIONS += --datadir=/usr/share
-CONFIGURE_OPTIONS += --disable-libcpp
-CONFIGURE_OPTIONS += --enable-dist-host-only
-CONFIGURE_OPTIONS += --enable-local-rust
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+# CONFIGURE_OPTIONS += --enable-local-rust
+CONFIGURE_OPTIONS += --local-rust-root=$(RUST_BOOTSTRAP_PATH)
+CONFIGURE_OPTIONS += --enable-extended       # Build and install cargo too.
+# CONFIGURE_OPTIONS += --disable-libcpp
+# CONFIGURE_OPTIONS += --enable-dist-host-only
 # CONFIGURE_OPTIONS += --enable-ccache
 # CONFIGURE_OPTIONS += --enable-sccache
-CONFIGURE_OPTIONS += --enable-clang
-CONFIGURE_OPTIONS += --local-rust-root=$(RUST_BOOTSTRAP_PATH)
+# CONFIGURE_OPTIONS += --enable-clang
 CONFIGURE_OPTIONS += --default-linker=gcc
 # CONFIGURE_OPTIONS += --disable-rustbuild
+CONFIGURE_OPTIONS += --enable-rpath
+CONFIGURE_OPTIONS += --disable-codegen-tests
+CONFIGURE_OPTIONS += --disable-dist-src
+CONFIGURE_OPTIONS += --disable-llvm-static-stdcpp
+CONFIGURE_OPTIONS += --disable-ninja
+CONFIGURE_OPTIONS += --enable-vendor
 CONFIGURE_OPTIONS += --disable-docs
 CONFIGURE_OPTIONS += --disable-jemalloc
+CONFIGURE_OPTIONS += --release-channel=stable
+CONFIGURE_OPTIONS += --python=$(PYTHON)
 CONFIGURE_OPTIONS.$(BITS) += CCACHE_BASEDIR="$(BUILD_DIR_$(BITS))"
 CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 
-CONFIGURE_ARGS  += RUST_BACKTRACE=1
+COMPONENT_BUILD_ENV += RUSTFLAGS="-C linker=gcc"
+COMPONENT_BUILD_ENV += RUST_BACKTRACE=1
+
+GMAKE = $(PYTHON)
+COMPONENT_BUILD_GMAKE_ARGS = 
+
+COMPONENT_BUILD_ARGS = ./x.py -v dist
+
+COMPONENT_INSTALL_ARGS = ./x.py -v install
+
+COMPONENT_BUILD_TARGETS = 
 
 build: $(BUILD_64)
 
