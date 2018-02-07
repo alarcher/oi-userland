@@ -27,9 +27,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rustc
 COMPONENT_VERSION=	1.23.0
-COMPONENT_FMRI=	developer/lang/rust
+COMPONENT_FMRI=	developer/lang/rustc
 COMPONENT_SUMMARY=	Safe, concurrent, practical languag
-COMPONENT_CLASSIFICATION=	Development/Rust
+COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_PROJECT_URL=	http://www.rust-lang.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -49,6 +49,7 @@ COMPONENT_ARCHIVE_1  = $(COMPONENT_SRC_1).tar.gz
 COMPONENT_ARCHIVE_HASH_1 =	\
     sha256:e512206e0c5bce691421f88b2479d4930351468f1e81e901d46f58bee42f7400
 COMPONENT_ARCHIVE_URL_1 = https://us-east.manta.joyent.com/pkgsrc/public/pkg-bootstraps/$(COMPONENT_ARCHIVE_1)
+
 SOURCE_DIR_1	= $(COMPONENT_DIR)/$(COMPONENT_SRC_1)
 RUST_BOOTSTRAP_PATH = $(SOURCE_DIR_1)
 
@@ -81,7 +82,7 @@ CONFIGURE_OPTIONS += --enable-extended       # Build and install cargo too.
 # CONFIGURE_OPTIONS += --enable-ccache
 # CONFIGURE_OPTIONS += --enable-sccache
 # CONFIGURE_OPTIONS += --enable-clang
-CONFIGURE_OPTIONS += --default-linker=gcc
+# CONFIGURE_OPTIONS += --default-linker=gcc
 # CONFIGURE_OPTIONS += --disable-rustbuild
 CONFIGURE_OPTIONS += --enable-rpath
 CONFIGURE_OPTIONS += --disable-codegen-tests
@@ -96,17 +97,37 @@ CONFIGURE_OPTIONS += --python=$(PYTHON)
 CONFIGURE_OPTIONS.$(BITS) += CCACHE_BASEDIR="$(BUILD_DIR_$(BITS))"
 CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 
+# cleanup standard enviroment!
+COMPONENT_BUILD_ENV =
+COMPONENT_BUILD_ENV += CC=gcc
+COMPONENT_BUILD_ENV += RUSTC=$(RUST_BOOTSTRAP_PATH)/bin/rustc
 COMPONENT_BUILD_ENV += RUSTFLAGS="-C linker=gcc"
 COMPONENT_BUILD_ENV += RUST_BACKTRACE=1
+# rustc builds libs without any search path!
+COMPONENT_BUILD_ENV += LD_LIBRARY_PATH=$(CONFIGURE_LIBDIR.$(BITS)):$(RUST_BOOTSTRAP_PATH)/lib
 
 GMAKE = $(PYTHON)
 COMPONENT_BUILD_GMAKE_ARGS = 
+COMPONENT_BUILD_TARGETS = dist
+COMPONENT_BUILD_ARGS = ./x.py -v -v -v -v
 
-COMPONENT_BUILD_ARGS = ./x.py -v dist
+COMPONENT_INSTALL_ARGS = ./x.py -v -v -v
+# cleanup istandard environemnt
+COMPONENT_INSTALL_ENV = 
+COMPONENT_INSTALL_ENV += $(COMPONENT_BUILD_ENV)
+# set install path
+COMPONENT_INSTALL_ENV += DESTDIR=$(PROTO_DIR)
 
-COMPONENT_INSTALL_ARGS = ./x.py -v install
-
-COMPONENT_BUILD_TARGETS = 
+COMPONENT_PRE_INSTALL_ACTION = \
+	mkdir -p $(PROTO_DIR)
 
 build: $(BUILD_64)
 
+install: $(INSTALL_64)
+
+REQUIRED_PACKAGES += library/libssh2
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += web/curl
