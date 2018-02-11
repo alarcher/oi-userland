@@ -57,14 +57,13 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=$(PATH.gnu)
+PATH=$(GCC_ROOT)/bin:$(PATH.gnu)
+
+# Need some help to pick the correct ar binary
+GNUAR=$(GNUBIN)/ar
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
-
-CONFIGURE_ENV += CC=clang
-CONFIGURE_ENV += CXX=clang++
-# CONFIGURE_ENV += PATH=$(PATH)
 
 CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
@@ -82,7 +81,14 @@ CONFIGURE_OPTIONS += --enable-extended       # Build and install cargo too.
 # CONFIGURE_OPTIONS += --enable-ccache
 # CONFIGURE_OPTIONS += --enable-sccache
 # CONFIGURE_OPTIONS += --enable-clang
-# CONFIGURE_OPTIONS += --default-linker=gcc
+# Otherwise sunstudio 12.1 cc is default selected
+CONFIGURE_OPTIONS += --default-linker=$(CC)
+CONFIGURE_OPTIONS += --set rust.default-linker=$(CC)
+# Need also to override target specific configuration variables
+CONFIGURE_OPTIONS += --set target.$(RUST_ARCH).cc=$(CC)
+CONFIGURE_OPTIONS += --set target.$(RUST_ARCH).cxx=$(CXX)
+CONFIGURE_OPTIONS += --set target.$(RUST_ARCH).ar=$(GNUAR)
+CONFIGURE_OPTIONS += --set target.$(RUST_ARCH).linker=$(CC)
 # CONFIGURE_OPTIONS += --disable-rustbuild
 CONFIGURE_OPTIONS += --enable-rpath
 CONFIGURE_OPTIONS += --disable-codegen-tests
@@ -97,14 +103,18 @@ CONFIGURE_OPTIONS += --python=$(PYTHON)
 CONFIGURE_OPTIONS.$(BITS) += CCACHE_BASEDIR="$(BUILD_DIR_$(BITS))"
 CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 
-# cleanup standard enviroment!
+# Cleanup standard environment!
 COMPONENT_BUILD_ENV =
-COMPONENT_BUILD_ENV += CC=gcc
+COMPONENT_BUILD_ENV += CC=$(CC)
+COMPONENT_BUILD_ENV += CXX=$(CXX)
+COMPONENT_BUILD_ENV += AR=$(GNUAR)
 COMPONENT_BUILD_ENV += RUSTC=$(RUST_BOOTSTRAP_PATH)/bin/rustc
-COMPONENT_BUILD_ENV += RUSTFLAGS="-C linker=gcc"
+# Enforce linker consistency
+COMPONENT_BUILD_ENV += RUSTFLAGS="-C linker=$(CC)"
 COMPONENT_BUILD_ENV += RUST_BACKTRACE=1
 # rustc builds libs without any search path!
-COMPONENT_BUILD_ENV += LD_LIBRARY_PATH=$(CONFIGURE_LIBDIR.$(BITS)):$(RUST_BOOTSTRAP_PATH)/lib
+# We need to add the path to GCC runtime libraries
+COMPONENT_BUILD_ENV += LD_LIBRARY_PATH=$(GCC_ROOT)/lib/$(MACH64):$(CONFIGURE_LIBDIR.$(BITS)):$(RUST_BOOTSTRAP_PATH)/lib
 
 GMAKE = $(PYTHON)
 COMPONENT_BUILD_GMAKE_ARGS = 
@@ -112,10 +122,10 @@ COMPONENT_BUILD_TARGETS = dist
 COMPONENT_BUILD_ARGS = ./x.py -v -v -v -v
 
 COMPONENT_INSTALL_ARGS = ./x.py -v -v -v
-# cleanup istandard environemnt
+# Cleanup standard environment
 COMPONENT_INSTALL_ENV = 
 COMPONENT_INSTALL_ENV += $(COMPONENT_BUILD_ENV)
-# set install path
+# Set install path
 COMPONENT_INSTALL_ENV += DESTDIR=$(PROTO_DIR)
 
 COMPONENT_PRE_INSTALL_ACTION = \
@@ -125,9 +135,10 @@ build: $(BUILD_64)
 
 install: $(INSTALL_64)
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/libssh2
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += system/library/g++-4-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl
