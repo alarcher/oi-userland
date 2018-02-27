@@ -36,7 +36,7 @@ RELEASE_MAJOR ?= 2018
 #
 # Release minor number: 0, 1, 2, etc.
 #
-RELEASE_MINOR ?= 0
+RELEASE_MINOR ?= 999
 
 #
 # Release update number: 0, 1, 2, etc.
