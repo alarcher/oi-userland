@@ -17,3 +17,15 @@
 # # <reason why is package disabled>
 # /^package$/d
 # 
+
+# Components broken with GCC 8.1
+/^developer\/gcc-5$/d
+/^openindiana\/gfx-drm$/d
+/^openindiana\/slim_source$/d
+/^runtime\/sbcl$/d
+
+# Components broken in build zone 
+/^sysutils\/sudo$/d
+/^sysutils\/virtualbox$/d
+/^openindiana\/illumos-gcc$/d
+/^developer\/gcc49$/d
