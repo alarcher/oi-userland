@@ -19,13 +19,15 @@ COMPONENT_NAME=		illumos-gate
 COMPONENT_SRC=		$(COMPONENT_NAME)
 
 GIT=git
-GIT_REPO=git://github.com/illumos/illumos-gate.git
-GIT_BRANCH=master
+GIT_REPO=git://github.com/tsoome/illumos-gate.git
+GIT_BRANCH=gcc7
 GIT_CHANGESET=HEAD
 
 FETCH=$(WS_TOOLS)/userland-fetch
 
 DEBUG=no
+
+RELEASE_MINOR=99
 
 ifeq ($(DEBUG),yes)
 NIGHTLY_OPTIONS=-nCDmpt
@@ -95,6 +97,8 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
 	  echo export BLD_JAVA_8=; \
 	  echo export CW_NO_SHADOW=1; \
 	  echo export __GNUC=\"\"; \
+	  echo export GCC_ROOT=$(GCC_ROOT); \
+	  echo export CW_GCC_DIR=$(GCC_ROOT)/bin; \
 	  echo export ONLY_LINT_DEFS=-I\$$SPRO_ROOT/sunstudio12.1/prod/include/lint; \
 	  echo export ONNV_BUILDNUM=$(ONNV_BUILDNUM); \
 	  echo export PKGVERS_BRANCH=$(ONNV_BUILDNUM)) > \
