@@ -1,6 +1,13 @@
---- pigz-2.4/Makefile.~1~	2017-12-26 16:35:01.000000000 +0000
-+++ pigz-2.4/Makefile	2018-05-26 11:05:51.528283377 +0000
-@@ -9,7 +9,7 @@ ZOP=deflate.o blocksplitter.o tree.o lz7
+--- pigz-2.4/Makefile.orig	2018-06-06 19:38:13.206226284 +0000
++++ pigz-2.4/Makefile	2018-06-06 19:44:55.993031070 +0000
+@@ -5,11 +5,14 @@
+ ZOPFLI=zopfli/src/zopfli/
+ ZOP=deflate.o blocksplitter.o tree.o lz77.o cache.o hash.o util.o squeeze.o katajainen.o
+ 
++BINDIR?=/usr/bin
++MANDIR?=/usr/share/man
++
+ # use gcc and gmake on Solaris
  
  pigz: pigz.o yarn.o try.o $(ZOP)
  	$(CC) $(LDFLAGS) -o pigz pigz.o yarn.o try.o $(ZOP) $(LIBS)
@@ -9,17 +16,16 @@
  
  pigz.o: pigz.c yarn.h try.h $(ZOPFLI)deflate.h $(ZOPFLI)util.h
  
-@@ -98,6 +98,14 @@ docs: pigz.pdf
+@@ -98,6 +101,13 @@
  pigz.pdf: pigz.1
  	groff -mandoc -f H -T ps pigz.1 | ps2pdf - pigz.pdf
  
 +install:
-+	@mkdir -p ../prototype/{i386,amd64}/usr/bin ../prototype/{i386,amd64}/usr/share/man/man1
-+	@install -m0755 pigz ../prototype/amd64/usr/bin
-+	@install -m0755 unpigz ../prototype/amd64/usr/bin
-+	@install -m0644 pigz.1 ../prototype/amd64/usr/share/man/man1
-+	@install -m0755 pigz ../prototype/i386/usr/bin
-+	@install -m0644 pigz.1 ../prototype/i386/usr/share/man/man1
++	@mkdir -p $(DESTDIR)$(BINDIR)
++	@install -m0755 pigz $(DESTDIR)$(BINDIR)
++	@install -m0755 unpigz $(DESTDIR)$(BINDIR)
++	@mkdir -p $(DESTDIR)$(MANDIR)/man1
++	@install -m0644 pigz.1 $(DESTDIR)$(MANDIR)/man1
 +
  all: pigz pigzj pigzt pigzn docs
  

@@ -23,4 +23,5 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/bin/pigz
+file path=usr/bin/unpigz
 file path=usr/share/man/man1/pigz.1
