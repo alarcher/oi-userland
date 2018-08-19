@@ -564,7 +564,6 @@ $(BUILD_DIR)/$(MACH)/publish.transforms: $(BUILD_DIR)/$(MACH)/.overlay
 
 	# Loader branding
 	echo "<transform set name=pkg.fmri value=pkg://[^/]*/system/boot/loader@.* -> emit file path=boot/loader.conf group=sys mode=0644 owner=root preserve=true>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
-	echo "<transform set name=pkg.fmri value=pkg://[^/]*/system/boot/loader@.* -> emit file path=boot/forth/brand-hipster.4th group=sys mode=0444 owner=root >" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform set name=pkg.fmri value=pkg://[^/]*/system/boot/loader@.* -> emit file path=boot/forth/logo-openindiana.4th group=sys mode=0444 owner=root >" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 
 	for i in $$(cd $(BUILD_DIR)/$(MACH)/overlay; find . -type f | \
