@@ -147,6 +147,8 @@ UNVERSIONED_MANIFESTS = $(filter-out %-GENFRAG.p5m,$(filter-out %-PYVER.p5m,$(CA
 PY_MANIFESTS = $(filter %-PYVER.p5m,$(CANONICAL_MANIFESTS))
 PYV_MANIFESTS = $(foreach v,$(shell echo $(PYTHON_VERSIONS) | tr -d .),$(shell echo $(PY_MANIFESTS) | sed -e 's/-PYVER.p5m/-$(v).p5m/g'))
 PYNV_MANIFESTS = $(shell echo $(PY_MANIFESTS) | sed -e 's/-PYVER//')
+FMRI_VERSION_STRING="PYV"
+FILE_VERSION_STRING="PYVER"
 else
 UNVERSIONED_MANIFESTS = $(CANONICAL_MANIFESTS)
 endif
@@ -157,6 +159,8 @@ NOPERL_MANIFESTS = $(filter-out %-GENFRAG.p5m,$(filter-out %-PERLVER.p5m,$(UNVER
 PERL_MANIFESTS = $(filter %-PERLVER.p5m,$(UNVERSIONED_MANIFESTS))
 PERLV_MANIFESTS = $(foreach v,$(shell echo $(PERL_VERSIONS) | tr -d .),$(shell echo $(PERL_MANIFESTS) | sed -e 's/-PERLVER.p5m/-$(v).p5m/g'))
 PERLNV_MANIFESTS = $(shell echo $(PERL_MANIFESTS) | sed -e 's/-PERLVER//')
+FMRI_VERSION_STRING="PLV"
+FILE_VERSION_STRING="PERLVER"
 else
 NOPERL_MANIFESTS = $(UNVERSIONED_MANIFESTS)
 endif
@@ -174,6 +178,8 @@ RUBYV_MANIFESTS = $(foreach v,$(shell echo $(RUBY_VERSIONS)),\
                       sed -e 's/-RUBYVER.p5m/-$(shell echo $(v) |\
                       cut -d. -f1,2 | tr -d .).p5m/g'))
 RUBYNV_MANIFESTS = $(shell echo $(RUBY_MANIFESTS) | sed -e 's/-RUBYVER//')
+FMRI_VERSION_STRING="RBV"
+FILE_VERSION_STRING="RUBYVER"
 else
 NORUBY_MANIFESTS = $(NOPERL_MANIFESTS)
 endif
@@ -462,15 +468,45 @@ $(BUILD_DIR)/.pre-published-$(MACH):	$(PRE_PUBLISHED)
 $(BUILD_DIR)/.published-$(MACH):	$(PUBLISHED)
 	$(TOUCH) $@
 
-print-package-names:	canonical-manifests
-	@cat $(VERSIONED_MANIFESTS) $(WS_TOP)/transforms/print-pkgs | \
-		$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
-		sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u
+#print-package-names:	canonical-manifests
+#	@cat $(VERSIONED_MANIFESTS) $(WS_TOP)/transforms/print-pkgs | \
+#		$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
+#		sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u
 
 print-package-paths:	canonical-manifests
 	@cat $(VERSIONED_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
 		$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u
+
+print-package-names:	canonical-manifests
+	@for i in $(CANONICAL_MANIFESTS); \
+	do \
+		p=`cat $$i $(WS_TOP)/transforms/print-pkgs | \
+		$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
+		sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u`; \
+		s=$(FMRI_VERSION_STRING); \
+		if [[  "$$p" =~ "\$$($$s)" ]]; \
+		then \
+			q=$${p#*(}; \
+			q=$${q%*)}; \
+			for j in $(VERSIONED_MANIFESTS); \
+			do \
+				r=$(FILE_VERSION_STRING); \
+				pfix=$${i%$${r}*}; \
+				sfix=$${i#*$${r}}; \
+				v=$${j#$${pfix}*}; \
+				if [ $$v != $$j ]; \
+				then \
+					v=$${v%*$${sfix}}; \
+					echo $${p/$$\($$q\)/$$v}; \
+				fi; \
+			done; \
+		elif [[ ! "$$i" =~ "GENFRAG" ]]; \
+		then \
+			echo $$p; \
+		fi; \
+	done;
+
 
 install-packages:	publish
 	@if [ $(IS_GLOBAL_ZONE) = 0 -o x$(ROOT) != x ]; then \
