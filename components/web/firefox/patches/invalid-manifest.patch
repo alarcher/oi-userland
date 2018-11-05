@@ -1,0 +1,16 @@
+--- firefox-60.3.0/browser/installer/package-manifest.in.orig	2018-11-05 16:10:30.620767336 +0000
++++ firefox-60.3.0/browser/installer/package-manifest.in	2018-11-05 16:11:16.194011080 +0000
+@@ -734,13 +734,6 @@
+ @RESPATH@/components/sandbox.xpt
+ #endif
+ 
+-; for Solaris SPARC
+-#ifdef SOLARIS
+-bin/libfreebl_32fpu_3.so
+-bin/libfreebl_32int_3.so
+-bin/libfreebl_32int64_3.so
+-#endif
+-
+ ; [Updater]
+ ;
+ #ifdef MOZ_UPDATER
