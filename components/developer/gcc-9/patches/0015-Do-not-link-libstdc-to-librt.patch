@@ -1,0 +1,39 @@
+From beb0d0f8a31bf48357c1b0cf5bfe8519e3ad6624 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Aur=C3=A9lien=20Larcher?= <aurelien.larcher@gmail.com>
+Date: Thu, 25 Oct 2018 21:01:41 +0200
+Subject: [PATCH 15/16] Do not link libstdc++ to librt
+
+---
+ libstdc++-v3/acinclude.m4 | 2 +-
+ libstdc++-v3/configure    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/libstdc++-v3/acinclude.m4 b/libstdc++-v3/acinclude.m4
+index 84258d87a33..f95718edebf 100644
+--- a/libstdc++-v3/acinclude.m4
++++ b/libstdc++-v3/acinclude.m4
+@@ -1435,7 +1435,7 @@ AC_DEFUN([GLIBCXX_ENABLE_LIBSTDCXX_TIME], [
+         ac_has_nanosleep=yes
+         ;;
+       solaris*)
+-        GLIBCXX_LIBS="$GLIBCXX_LIBS -lrt"
++        GLIBCXX_LIBS="$GLIBCXX_LIBS"
+         ac_has_clock_monotonic=yes
+         ac_has_clock_realtime=yes
+         ac_has_nanosleep=yes
+diff --git a/libstdc++-v3/configure b/libstdc++-v3/configure
+index 7d134a0034b..b3ba4708f49 100755
+--- a/libstdc++-v3/configure
++++ b/libstdc++-v3/configure
+@@ -20880,7 +20880,7 @@ $as_echo "$glibcxx_glibc217" >&6; }
+         ac_has_nanosleep=yes
+         ;;
+       solaris*)
+-        GLIBCXX_LIBS="$GLIBCXX_LIBS -lrt"
++        GLIBCXX_LIBS="$GLIBCXX_LIBS"
+         ac_has_clock_monotonic=yes
+         ac_has_clock_realtime=yes
+         ac_has_nanosleep=yes
+-- 
+2.19.1
+
