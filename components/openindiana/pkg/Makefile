@@ -20,8 +20,8 @@ COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_REVISION=$(shell cd $(COMPONENT_SRC); git rev-list HEAD --count)
 
 GIT=git
-GIT_REPO=git://github.com/OpenIndiana/pkg5.git
-GIT_BRANCH=oi
+GIT_REPO=git://github.com/pyhalov/pkg5.git
+GIT_BRANCH=omnios-merge
 GIT_CHANGESET=HEAD
 
 MAKE=/usr/bin/make
