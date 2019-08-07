@@ -1,0 +1,13 @@
+--- cmake-3.15.1/bootstrap.orig	2019-08-07 15:13:20.336161346 +0000
++++ cmake-3.15.1/bootstrap	2019-08-07 15:14:46.487546998 +0000
+@@ -225,8 +225,8 @@
+ cmake_man_dir_default="`cmake_install_dest_default MAN ${cmake_man_dir_keyword}`"
+ cmake_xdgdata_dir_default="`cmake_install_dest_default XDGDATA ${cmake_xdgdata_dir_keyword}`"
+ 
+-CMAKE_KNOWN_C_COMPILERS="cc gcc clang xlc icc tcc"
+-CMAKE_KNOWN_CXX_COMPILERS="aCC xlC CC g++ clang++ c++ icc como "
++CMAKE_KNOWN_C_COMPILERS="gcc cc clang "
++CMAKE_KNOWN_CXX_COMPILERS="g++ CC c++ clang++ "
+ CMAKE_KNOWN_MAKE_PROCESSORS="gmake make"
+ 
+ CMAKE_PROBLEMATIC_FILES="\
