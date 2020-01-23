@@ -67,6 +67,8 @@ test:           $(TESTS_32)
 # Build dependencies
 REQUIRED_PACKAGES += library/ruby/bundler
 REQUIRED_PACKAGES += system/font/truetype/liberation
+REQUIRED_PACKAGES += application/cluster/corosync
+REQUIRED_PACKAGES += application/cluster/pacemaker
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
