@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libjpeg-turbo
 COMPONENT_VERSION= 1.5.2
+COMPONENT_REVISION= 1
 COMPONENT_FMRI= image/library/libjpeg-turbo
 COMPONENT_PROJECT_URL= http://www.libjpeg-turbo.org/
 COMPONENT_SUMMARY= libjpeg -JPEG Turbo libraries
@@ -34,6 +35,9 @@ include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_DEFAULT_DIRS=no
 
+GNU_TRIPLET.32=i386-pc-solaris2.11
+GNU_TRIPLET.64=x86_64-pc-solaris2.11
+
 # Warnings are normal: libtool:   error: ignoring unknown tag NASM
 
 CONFIGURE_OPTIONS.JPEG6= 
@@ -46,10 +50,11 @@ CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_OPTIONS+=	$(CONFIGURE_OPTIONS.JPEG$(JPEG_API_VERSION))
 CONFIGURE_OPTIONS+= --mandir=$(CONFIGURE_MANDIR)
 CONFIGURE_OPTIONS+= --includedir=$(CONFIGURE_INCLUDEDIR)/libjpeg$(JPEG_API_VERSION)-turbo
+CONFIGURE_OPTIONS.32+= --build=$(GNU_TRIPLET.32)
 CONFIGURE_OPTIONS.32+= --bindir=$(USRLIBDIR)/libjpeg$(JPEG_API_VERSION)-turbo/bin
 CONFIGURE_OPTIONS.32+= --libdir=$(USRLIBDIR)/libjpeg$(JPEG_API_VERSION)-turbo/lib
 # Autoconf infers the build type incorrectly from the host triplet
-CONFIGURE_OPTIONS.64+= --build=x86_64-solaris2.11
+CONFIGURE_OPTIONS.64+= --build=$(GNU_TRIPLET.64)
 CONFIGURE_OPTIONS.64+= --bindir=$(USRLIBDIR)/libjpeg$(JPEG_API_VERSION)-turbo/bin/$(MACH64)
 CONFIGURE_OPTIONS.64+= --libdir=$(USRLIBDIR)/libjpeg$(JPEG_API_VERSION)-turbo/lib/$(MACH64)
 
