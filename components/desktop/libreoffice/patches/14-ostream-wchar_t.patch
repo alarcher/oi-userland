@@ -1,0 +1,70 @@
+From 48f845dace0aa7a607914db9febdaf73073ea607 Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Tue, 03 Dec 2019 11:44:04 +0100
+Subject: [PATCH] external/clucene: Adapt to C++20 deleted ostream << for non-plain char types
+
+<http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1423r3.html> "char8_t
+backward compatibility remediation", as implemented now by <https://gcc.gnu.org/
+git/?p=gcc.git;a=commit;h=0c5b35933e5b150df0ab487efb2f11ef5685f713> "libstdc++:
+P1423R3 char8_t remediation (2/4)" for -std=c++2a, deletes operator << overloads
+that would print a pointer rather than a (presumably expected) string.
+
+So this infoStream output appears to have always been broken (the strings use
+TCHAR, which appears to unconditionally be a typedef for wchar_t, see
+workdir/UnpackedTarball/clucene/src/shared/CLucene/clucene-config.h), and
+appears to be just of informative nature, so just simplify it to not try to
+print any problematic parts.
+
+Change-Id: Ie9f8edb03aff461a15718a0c025af57004aba0a9
+Reviewed-on: https://gerrit.libreoffice.org/84320
+Tested-by: Jenkins
+Reviewed-by: Stephan Bergmann <sbergman@redhat.com>
+---
+
+diff --git a/external/clucene/UnpackedTarball_clucene.mk b/external/clucene/UnpackedTarball_clucene.mk
+index a878947..5303d4d 100644
+--- a/external/clucene/UnpackedTarball_clucene.mk
++++ b/external/clucene/UnpackedTarball_clucene.mk
+@@ -40,6 +40,7 @@
+ 	external/clucene/patches/clucene-mutex.patch \
+ 	external/clucene/patches/clucene-asan.patch \
+ 	external/clucene/patches/clucene-mixes-uptemplate-parameter-msvc-14.patch \
++	external/clucene/patches/ostream-wchar_t.patch \
+ ))
+ 
+ ifneq ($(OS),WNT)
+diff --git a/external/clucene/patches/ostream-wchar_t.patch b/external/clucene/patches/ostream-wchar_t.patch
+new file mode 100644
+index 0000000..63c9e14
+--- /dev/null
++++ b/external/clucene/patches/ostream-wchar_t.patch
+@@ -0,0 +1,29 @@
++--- src/core/CLucene/index/DocumentsWriterThreadState.cpp
+++++ src/core/CLucene/index/DocumentsWriterThreadState.cpp
++@@ -484,7 +484,7 @@
++         last->next = fp->next;
++ 
++       if (_parent->infoStream != NULL)
++-        (*_parent->infoStream) << "  remove field=" << fp->fieldInfo->name << "\n";
+++        (*_parent->infoStream) << "  remove field\n";
++ 
++       _CLDELETE(fp);
++     } else {
++@@ -557,7 +557,7 @@
++     fieldDataArray[i]->processField(analyzer);
++ 
++   if (maxTermPrefix != NULL && _parent->infoStream != NULL)
++-    (*_parent->infoStream) << "WARNING: document contains at least one immense term (longer than the max length " << MAX_TERM_LENGTH << "), all of which were skipped.  Please correct the analyzer to not produce such terms.  The prefix of the first immense term is: '" << maxTermPrefix << "...'\n";
+++    (*_parent->infoStream) << "WARNING: document contains at least one immense term (longer than the max length " << MAX_TERM_LENGTH << "), all of which were skipped.  Please correct the analyzer to not produce such terms.\n";
++ 
++   if (_parent->ramBufferSize != IndexWriter::DISABLE_AUTO_FLUSH
++       && _parent->numBytesUsed > 0.95 * _parent->ramBufferSize)
++@@ -910,7 +910,7 @@
++ 					// truncate the token stream after maxFieldLength tokens.
++ 					if ( length >= maxFieldLength) {
++ 	          if (_parent->infoStream != NULL)
++-	            (*_parent->infoStream) << "maxFieldLength "  << maxFieldLength << " reached for field " << fieldInfo->name << ", ignoring following tokens\n";
+++	            (*_parent->infoStream) << "maxFieldLength "  << maxFieldLength << " reached for field, ignoring following tokens\n";
++ 						break;
++ 					}
++ 				} else if (length > IndexWriter::DEFAULT_MAX_FIELD_LENGTH) {
