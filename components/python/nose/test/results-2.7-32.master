@@ -1,2 +1,13 @@
+ERROR: test (test_twisted.TestTwisted)
+ERROR: test (test_twisted.TestTwisted)
+ERROR: test_error (test_twisted.TestTwisted)
+ERROR: test_error (test_twisted.TestTwisted)
+ERROR: test_error (test_twisted.TestTwisted)
+ERROR: test_fail (test_twisted.TestTwisted)
+ERROR: test_fail (test_twisted.TestTwisted)
+ERROR: test_skip (test_twisted.TestTwisted)
+ERROR: test_skip (test_twisted.TestTwisted)
+Ran 4 tests in
+FAILED (failures=1, errors=9, skipped=1)
 Ran 393 tests in
-OK (SKIP=1)
+FAILED (SKIP=1, failures=1)
