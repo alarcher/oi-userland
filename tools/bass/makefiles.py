@@ -108,6 +108,9 @@ class Makefile(object):
         self.update()
 
     def update(self):
+        self.includes = []
+        self.variables = {}
+        self.targets = {}
         # Construct list of keywords
         kw = Keywords()
 

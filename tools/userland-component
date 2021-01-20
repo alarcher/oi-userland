@@ -114,6 +114,7 @@ def refactor001(mk):
             if i.str[0] == MK.makefile_path(build_style):
                 i.str[0] = MK.makefile_path("common")
                 include_common_mk = i
+                rem_lines.add(i.idx)
             elif re.match(r".*/shared-macros.mk$", i.str[0]):
                 include_shared_mk = i
             new_includes.append(i)
