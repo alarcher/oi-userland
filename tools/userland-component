@@ -1,0 +1,185 @@
+#!/usr/bin/python3.5
+
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2021 Aurelien Larcher
+#
+
+import argparse
+import os
+import re
+import sys
+import json
+
+from bass.component import Component
+from bass.makefiles import Item
+from bass.makefiles import Keywords
+from bass.makefiles import Makefile as MK
+
+# Refactoring rules
+# 000:  Use WS_* variables instead $(WS_TOP)/* 
+#       If $(WS_TOP)/make-rules is found in an include then replace with the
+#       variable $(WS_RULES). Do the same for other variables.
+def refactor000(mk):
+    for i in iter(mk.includes):
+        r = re.match(r"^\$\(WS_TOP\)\/(.*)\/(.*).mk", i.str[0])
+        if r is not None:
+            subdir = r.group(1)
+            mkfile = r.group(2)
+            print("000: Fix include " + i.str[0])
+            i.str = [MK.value("WS_"+subdir.upper().replace("-","_"))+"/"+mkfile+".mk"]
+            mk.contents[i.idx] = i.include_line()
+
+
+# 001:  Use common.mk
+#       If common.mk is not included then:
+#           1. infer the build system and set the BUILD_STYLE.
+#           2. set the BUILD_BITS from the existing targets.
+#           3. erase default target and keep the custom ones.
+def refactor001(mk):
+    kw = Keywords()
+    if "BUILD_STYLE" in mk.variables:
+        return
+    # Build style
+    build_style = None
+    for i in iter(mk.includes):
+        r = re.match(r"^\$\(WS_MAKE_RULES\)/(.*).mk$", i.str[0])
+        if r is not None:
+            build_style = r.group(1) if r.group(1) in kw.variables["BUILD_STYLE"] else None
+            if build_style is not None:
+                mk.variables["BUILD_STYLE"] = Item(-1, build_style)
+                break
+    if build_style is None:
+        raise ValueError("Variable BUILD_STYLE cannot be defined")
+    else:
+        print("001: Setting build style to '" + build_style + "'")
+    build_style = mk.variables["BUILD_STYLE"].str
+    # Build bits
+    mk_bits = mk.run("print-value-MK_BITS")[0]
+    if mk_bits not in kw.variables["MK_BITS"]:
+        raise ValueError("Variable MK_BITS cannot be defined")
+    else:
+        print("001: Setting make bits to '" + mk_bits + "'")
+    # Check targets
+    mk_bits_32_no_arch = False
+    new_targets = {}
+    for t, u in iter(mk.targets.items()):
+        # We do not know how to handle target with defined steps yet
+        if len(u.str) > 1:
+            continue
+        # Process target
+        found = False
+        for v in kw.targets[t]:
+            v = MK.value(v.replace(MK.value("MK_BITS"), mk_bits))
+            # If the target dependency is one of the default values
+            if u.str[0] == v:
+                found = True
+                w = MK.target_value(t, mk_bits)
+                if v == w:
+                    print("001: Use default target '"+t+"'")
+                    u.str = None 
+                else:
+                    print("001: Define target '"+t+"': "+u.str[0])
+                    new_targets[t] = u
+                break
+        if not found:
+            # Some Python/Perl makefiles actually use NO_ARCH target with MK_BITS=32
+            if mk_bits == '32' and u.str[0] == MK.value(t.upper()+"_NO_ARCH"):
+                if not mk_bits_32_no_arch:
+                    print("001: Changing make bits from '32' to 'NO_ARCH'")
+                    mk_bits_32_no_arch = True
+                u.str = None
+            else:
+                raise ValueError("001: Inconsistent target '"+t+"': "+u.str[0])
+    if mk_bits_32_no_arch:
+        mk_bits = "NO_ARCH"
+    # Collect items
+    rem_lines = set()
+    rem_includes = [ MK.makefile_path("prep"), MK.makefile_path("ips")]
+    new_includes = []
+    include_shared_mk = None
+    include_common_mk = None
+    for i in mk.includes:
+        if i.str[0] not in rem_includes:
+            if i.str[0] == MK.makefile_path(build_style):
+                i.str[0] = MK.makefile_path("common")
+                include_common_mk = i
+            elif re.match(r".*/shared-macros.mk$", i.str[0]):
+                include_shared_mk = i
+            new_includes.append(i)
+        else:
+            rem_lines.add(i.idx)
+    mk.includes = new_includes
+    if include_common_mk is None:
+        raise ValueError("Include directive of common.mk not found")
+    if include_shared_mk is None:
+        raise ValueError("Include directive of shared-macros.mk not found")
+    # Add lines to skip for default targets 
+    for u in mk.targets.values():
+        if u.str is None:
+            rem_lines.add(u.idx)
+    # Update content 
+    contents = mk.contents[0:include_shared_mk.idx]
+    # Add build macros
+    contents.append("BUILD_STYLE="+build_style+"\n")
+    contents.append("BUILD_BITS="+mk_bits+"\n")
+    # Write metadata lines 
+    for idx, line in enumerate(mk.contents[include_shared_mk.idx:include_common_mk.idx]):
+        if (include_shared_mk.idx + idx) in rem_lines:
+            continue
+        contents.append(line)
+    # Write new targets
+    for t  in ["build", "install", "test"]:
+        if t in new_targets.keys():
+            contents.append(t.upper()+"_TARGET="+new_targets[t].str[0]+"\n")
+            rem_lines.add(+new_targets[t].idx)
+    # Add common include
+    contents.append(include_common_mk.include_line())
+    # Write lines 
+    for idx, line in enumerate(mk.contents[include_common_mk.idx:]):
+        if (include_common_mk.idx + idx) in rem_lines:
+            continue
+        contents.append(line)
+    mk.contents = contents
+    mk.update()
+
+
+def update_component(path, version, verbose):
+    mk = MK(path)
+    kw = Keywords()
+    refactor000(mk)
+    refactor001(mk)
+    with open(os.path.join(mk.path, "Makefile"), 'w') as f:
+        for line in mk.contents:
+            f.write(line)
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--path', default='components',
+                        help='Directory holding components')
+    parser.add_argument('--version',
+                        help='Bump component to given version')
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        default=False, help='Verbose output')
+    args = parser.parse_args()
+
+    path = args.path
+    version = args.version
+    verbose = args.verbose
+
+    update_component(path=path, version=version, verbose=verbose)
+
+
+if __name__ == '__main__':
+    main()
